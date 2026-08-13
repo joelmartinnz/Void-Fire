@@ -9,6 +9,17 @@ html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Seg
 .giant{font-weight:900;letter-spacing:0.02em;margin:0;color:transparent;background:linear-gradient(90deg,var(--accent),#ff9a3d);-webkit-background-clip:text;background-clip:text;font-size:clamp(48px,12vw,160px);line-height:0.9;text-transform:uppercase}
 .subtitle{margin-top:1rem;color:#ddd;opacity:0.9}
 .content{max-width:800px;margin:2rem auto;padding:0 1rem}
+.fire{position:absolute;height:120px;opacity:0.7;filter:drop-shadow(0 0 10px #ff4d4f)}
+.fire-1{top:10%;left:5%;width:150px;transform:rotate(-25deg) scaleX(-1);opacity:0.6}
+.fire-2{top:25%;right:8%;width:180px;transform:rotate(35deg);opacity:0.65}
+.fire-3{top:50%;left:-50px;width:200px;transform:rotate(-15deg);opacity:0.7}
+.fire-4{top:55%;right:-30px;width:160px;transform:rotate(20deg) scaleX(-1);opacity:0.68}
+.fire-5{top:200%;left:10%;width:140px;transform:rotate(45deg);opacity:0.6}
+.fire-6{margin-left:-80px;width:120px;transform:rotate(-30deg);opacity:0.55}
+.fire-7{margin-right:-90px;width:130px;transform:rotate(25deg) scaleX(-1);opacity:0.58}
+.fire-8{bottom:-100px;right:15%;width:180px;transform:rotate(-40deg);opacity:0.62}
+.hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;height:70vh;text-align:center;padding:2rem;overflow:hidden}
+.content{position:relative}
 
 @media (max-width:520px){
   .giant{font-size:clamp(36px,18vw,72px)}
