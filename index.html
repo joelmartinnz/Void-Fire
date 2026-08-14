@@ -8,6 +8,25 @@
   <meta http-equiv="Cache-Control" content="max-age=0, no-cache, no-store, must-revalidate">
 </head>
 <body>
+  <audio id="home-bg-sound" loop>
+    <source src="audio/your-sound-file.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Script to play instantly when the page loads -->
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const sound = document.getElementById('home-bg-sound');
+        
+        // Attempt to play immediately
+        sound.play().catch(error => {
+            // Backup: If they typed the URL manually, play on their very first click anywhere on the page
+            console.log("Autoplay blocked. Waiting for first click.");
+            document.addEventListener('click', () => {
+                sound.play();
+            }, { once: true });
+        });
+    });
+</script>
   <!-- NAVIGATION -->
   <nav class="navbar">
     <div class="nav-container">
