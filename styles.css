@@ -54,6 +54,39 @@ html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Seg
 .price-item h3{margin:1rem 0.8rem 0.2rem 0.8rem;font-size:0.95rem;color:var(--text);line-height:1.3;word-break:break-word}
 .price-tag{margin:0.2rem 0.8rem 0.8rem 0.8rem;font-size:1.2rem;font-weight:900;color:var(--accent);margin-bottom:0}
 
+/* SHOP */
+.shop-section{background:rgba(15,15,15,0.35)}
+.shop-heading{display:flex;justify-content:space-between;align-items:end;gap:2rem;margin-bottom:2rem}
+.shop-heading .section-desc{margin-bottom:0}
+.eyebrow,.item-type{color:#ff9a3d;font-size:0.72rem;font-weight:800;letter-spacing:2px;margin:0 0 0.4rem}
+.shop-mark{color:#666;font-size:0.75rem;font-weight:700;letter-spacing:2px;white-space:nowrap}
+.shop-grid,.merch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.shop-item,.merch-item{background:var(--card-bg);border:1px solid rgba(255,77,79,0.22);border-radius:8px;overflow:hidden;transition:transform 0.3s,border-color 0.3s,box-shadow 0.3s}
+.shop-item:hover,.merch-item:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 12px 25px rgba(255,77,79,0.14)}
+.shop-image,.merch-image{height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,#6e1714 0%,#250606 48%,#100505 100%);color:#fff;position:relative;overflow:hidden}
+.shop-image:after,.merch-image:after{content:"";position:absolute;inset:12px;border:1px solid rgba(255,154,61,0.25);transform:rotate(45deg);pointer-events:none}
+.shop-image span{font-size:3.4rem;font-weight:900;line-height:0.8;color:#ff9a3d;text-shadow:0 0 18px rgba(255,77,79,0.8)}
+.shop-image small{margin-top:0.8rem;letter-spacing:3px;color:#f5f5f5}
+.supply-tray{background:radial-gradient(circle at center,#a52d19 0%,#260707 48%,#100505 100%)}
+.supply-tokens{background:radial-gradient(circle at center,#c4471f 0%,#3a0b07 52%,#100505 100%)}
+.supply-case{background:radial-gradient(circle at center,#4b2320 0%,#1a0908 55%,#100505 100%)}
+.shop-item-body,.merch-item-body{padding:1rem}
+.shop-item h3,.merch-item h3{margin:0;color:var(--text);font-size:1.05rem}
+.shop-item p:not(.item-type),.merch-item p{color:#999;font-size:0.86rem;line-height:1.45;min-height:2.5rem;margin:0.55rem 0 0.8rem}
+.shop-item strong,.merch-item strong{color:var(--accent);font-size:1.25rem}
+.merch-section{background:#120707;border-top-color:rgba(255,154,61,0.25)}
+.merch-image{height:220px;background:linear-gradient(145deg,#34100d,#100505 70%)}
+.merch-image span{font-weight:900;letter-spacing:4px;color:#ff4d4f;text-align:center;font-size:2rem;line-height:0.95;z-index:1}
+.merch-cap{background:linear-gradient(145deg,#552114,#180605 70%)}
+.merch-cap span{border:3px solid #ff9a3d;border-radius:50%;padding:1rem;color:#ff9a3d;font-size:2.4rem}
+.merch-hoodie{background:linear-gradient(145deg,#24191a,#090707 70%)}
+.merch-hoodie span{color:#f5f5f5;font-size:1.4rem}
+.merch-pin{background:linear-gradient(145deg,#8f2a14,#1b0706 70%)}
+.merch-pin span{font-size:5rem;color:#ff9a3d;text-shadow:0 0 18px #ff4d4f}
+.merch-stapler{background:linear-gradient(145deg,#b33b1c,#260807 70%)}
+.merch-stapler span{font-size:2.8rem;color:#ff9a3d;border:2px solid #ff9a3d;padding:0.35rem 0.55rem;line-height:1}
+.merch-stapler small{margin-top:0.7rem;color:#f5f5f5;letter-spacing:3px;z-index:1}
+
 /* MINI GAMES */
 .minigames-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin-top:2rem}
 .minigame{background:var(--card-bg);padding:2rem;border-radius:8px;text-align:center;border-bottom:4px solid var(--accent)}
@@ -68,8 +101,10 @@ html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Seg
   .nav-links a{display:block;padding:0.5rem}
   .giant{font-size:clamp(36px,18vw,72px)}
   .cards-grid,.designs-gallery,.rules-content,.minigames-grid{grid-template-columns:1fr}
+  .shop-grid,.merch-grid{grid-template-columns:repeat(2,1fr)}
+  .shop-heading{align-items:start;flex-direction:column;gap:0.5rem}
   .pricing-grid-temu{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:480px){
-  .pricing-grid-temu{grid-template-columns:1fr}
+  .pricing-grid-temu,.shop-grid,.merch-grid{grid-template-columns:1fr}
 }
