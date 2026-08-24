@@ -8,8 +8,13 @@
   <meta http-equiv="Cache-Control" content="max-age=0, no-cache, no-store, must-revalidate">
 </head>
 <body>
-  
-<!-- Script to play instantly when the page loads -->
+  <!-- Section sounds play when their matching area enters view. -->
+  <audio id="home-sound" src="boom.mp3" preload="auto"></audio>
+  <audio id="lore-sound" src="scottishperson-sound-effect-machine-gun-333524.mp3" preload="metadata"></audio>
+  <audio id="rules-sound" src="dragon-studio-monster-growl-376892.mp3" preload="metadata"></audio>
+  <audio id="pricing-sound" src="freesound_community-good-6081.mp3" preload="metadata"></audio>
+  <audio id="swag-sound" src="freesound_community-space-music-end-of-time-cilp-by-kris-klavenes-220417-17436.mp3" preload="metadata"></audio>
+  <audio id="minigames-sound" src="olivia_parker-fun-comedic-drum-demo-306644.mp3" preload="metadata"></audio>
 
   <!-- NAVIGATION -->
   <nav class="navbar">
@@ -348,6 +353,58 @@
     function playMiniGame() {
       alert("Mini game coming soon! 🎮");
     }
+
+    const sectionSounds = [
+      { section: document.querySelector('#home'), sound: document.querySelector('#home-sound') },
+      { section: document.querySelector('#lore'), sound: document.querySelector('#lore-sound') },
+      { section: document.querySelector('#rules'), sound: document.querySelector('#rules-sound') },
+      { section: document.querySelector('#pricing'), sound: document.querySelector('#pricing-sound') },
+      { section: document.querySelector('#merchandise'), sound: document.querySelector('#swag-sound') },
+      { section: document.querySelector('#minigames'), sound: document.querySelector('#minigames-sound') }
+    ];
+
+    let playingSound = null;
+
+    function playSectionSound(sound) {
+      if (sound.dataset.played === 'true') return;
+
+      if (playingSound && playingSound !== sound) {
+        playingSound.pause();
+        playingSound.currentTime = 0;
+      }
+
+      sound.play().then(() => {
+        sound.dataset.played = 'true';
+        playingSound = sound;
+      }).catch(() => {
+        // Browsers require a first tap/key press before audible autoplay is allowed.
+      });
+    }
+
+    const soundObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) playSectionSound(entry.target.sectionSound);
+      });
+    }, { threshold: 0.45 });
+
+    sectionSounds.forEach(({ section, sound }) => {
+      section.sectionSound = sound;
+      soundObserver.observe(section);
+    });
+
+    // If audible autoplay was blocked on first load, start the visible section
+    // as soon as the visitor makes their first interaction.
+    function enableSectionSounds() {
+      sectionSounds.forEach(({ section, sound }) => {
+        const bounds = section.getBoundingClientRect();
+        if (bounds.top < window.innerHeight && bounds.bottom > 0) playSectionSound(sound);
+      });
+      window.removeEventListener('pointerdown', enableSectionSounds);
+      window.removeEventListener('keydown', enableSectionSounds);
+    }
+
+    window.addEventListener('pointerdown', enableSectionSounds, { once: true });
+    window.addEventListener('keydown', enableSectionSounds, { once: true });
   </script>
 </body>
 </html>
