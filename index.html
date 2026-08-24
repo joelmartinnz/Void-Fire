@@ -327,18 +327,48 @@
       <div class="minigames-grid">
         <div class="minigame">
           <h3>🎲 Roll the Void</h3>
-          <p>Roll the dice and predict the outcome. Win points for correct guesses!</p>
-          <button class="btn" onclick="playMiniGame()">Play Now</button>
+          <p>Pick a number, then roll. A correct prediction earns a point.</p>
+          <div class="number-picker" aria-label="Choose a dice number">
+            <button type="button" data-guess="1">1</button><button type="button" data-guess="2">2</button><button type="button" data-guess="3">3</button><button type="button" data-guess="4">4</button><button type="button" data-guess="5">5</button><button type="button" data-guess="6">6</button>
+          </div>
+          <button class="btn" id="roll-button" type="button">Roll the dice</button>
+          <p class="game-status" id="roll-status" aria-live="polite">Choose a number to begin.</p>
         </div>
         <div class="minigame">
           <h3>🔥 Flame Match</h3>
-          <p>Match pairs of fire symbols before time runs out.</p>
-          <button class="btn" onclick="playMiniGame()">Play Now</button>
+          <p>Find all three matching pairs.</p>
+          <div class="memory-grid" id="memory-grid" aria-label="Flame Match cards"></div>
+          <button class="btn" id="memory-reset" type="button">New game</button>
+          <p class="game-status" id="memory-status" aria-live="polite">Find the matching flames.</p>
         </div>
         <div class="minigame">
           <h3>⚡ Speed Challenge</h3>
-          <p>See how fast you can identify matching card patterns.</p>
-          <button class="btn" onclick="playMiniGame()">Play Now</button>
+          <p>Choose the pattern that matches the signal before time runs out.</p>
+          <div class="speed-target" id="speed-target">Press start</div>
+          <div class="speed-options" id="speed-options"></div>
+          <button class="btn" id="speed-start" type="button">Start 15-second challenge</button>
+          <p class="game-status" id="speed-status" aria-live="polite">Score: 0 · Time: 15</p>
+        </div>
+        <div class="minigame">
+          <h3>🟣 Void Breakout</h3>
+          <p>Break the purple-fire barrier. Catch power-ups to survive longer.</p>
+          <canvas class="arcade-canvas" id="breakout-canvas" width="320" height="220" aria-label="Void Breakout game"></canvas>
+          <button class="btn" id="breakout-start" type="button">Start Void Breakout</button>
+          <p class="game-status" id="breakout-status" aria-live="polite">Move the paddle with your mouse or finger.</p>
+        </div>
+        <div class="minigame">
+          <h3>💣 Void Mines</h3>
+          <p>Clear the field without waking the void mines. Right-click or Shift-click to flag.</p>
+          <div class="mines-board" id="mines-board" aria-label="Void Mines board"></div>
+          <button class="btn" id="mines-reset" type="button">New minefield</button>
+          <p class="game-status" id="mines-status" aria-live="polite">10 void mines are hidden.</p>
+        </div>
+        <div class="minigame">
+          <h3>🏃 Void Runner</h3>
+          <p>Race through the void tunnel. Move between lanes to avoid broken panels.</p>
+          <canvas class="arcade-canvas" id="runner-canvas" width="320" height="180" aria-label="Void Runner game"></canvas>
+          <button class="btn" id="runner-start" type="button">Start Void Runner</button>
+          <p class="game-status" id="runner-status" aria-live="polite">Use A/D or ←/→ to move around the tunnel.</p>
         </div>
       </div>
     </div>
@@ -350,9 +380,405 @@
   </footer>
 
   <script>
-    function playMiniGame() {
-      alert("Mini game coming soon! 🎮");
+    // Roll the Void
+    let rollGuess = null;
+    let rollScore = 0;
+    const guessButtons = document.querySelectorAll('[data-guess]');
+    const rollStatus = document.querySelector('#roll-status');
+
+    guessButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        rollGuess = Number(button.dataset.guess);
+        guessButtons.forEach((item) => item.classList.toggle('selected', item === button));
+        rollStatus.textContent = `You chose ${rollGuess}. Now roll the dice.`;
+      });
+    });
+
+    document.querySelector('#roll-button').addEventListener('click', () => {
+      if (!rollGuess) {
+        rollStatus.textContent = 'Pick a number first.';
+        return;
+      }
+      const roll = Math.floor(Math.random() * 6) + 1;
+      const won = roll === rollGuess;
+      if (won) rollScore += 1;
+      rollStatus.textContent = `${won ? 'Direct hit!' : 'Miss!'} You rolled ${roll}. Score: ${rollScore}`;
+    });
+
+    // Flame Match
+    const flameSymbols = ['🔥', '☄️', '🌋'];
+    let flippedCards = [];
+    let matchedCards = 0;
+    let lockMemoryBoard = false;
+    const memoryGrid = document.querySelector('#memory-grid');
+    const memoryStatus = document.querySelector('#memory-status');
+
+    function shuffle(items) {
+      return [...items].sort(() => Math.random() - 0.5);
     }
+
+    function startMemoryGame() {
+      flippedCards = [];
+      matchedCards = 0;
+      lockMemoryBoard = false;
+      memoryStatus.textContent = 'Find the matching flames.';
+      memoryGrid.replaceChildren();
+      shuffle([...flameSymbols, ...flameSymbols]).forEach((symbol) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'memory-card';
+        card.dataset.symbol = symbol;
+        card.setAttribute('aria-label', 'Hidden card');
+        card.addEventListener('click', () => flipMemoryCard(card));
+        memoryGrid.append(card);
+      });
+    }
+
+    function flipMemoryCard(card) {
+      if (lockMemoryBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      card.classList.add('flipped');
+      card.textContent = card.dataset.symbol;
+      card.setAttribute('aria-label', card.dataset.symbol);
+      flippedCards.push(card);
+      if (flippedCards.length < 2) return;
+
+      const [first, second] = flippedCards;
+      if (first.dataset.symbol === second.dataset.symbol) {
+        first.classList.add('matched');
+        second.classList.add('matched');
+        flippedCards = [];
+        matchedCards += 1;
+        memoryStatus.textContent = matchedCards === flameSymbols.length ? 'You matched every flame!' : 'Match found! Keep going.';
+        return;
+      }
+
+      lockMemoryBoard = true;
+      memoryStatus.textContent = 'Not a match — try again.';
+      window.setTimeout(() => {
+        [first, second].forEach((item) => {
+          item.classList.remove('flipped');
+          item.textContent = '';
+          item.setAttribute('aria-label', 'Hidden card');
+        });
+        flippedCards = [];
+        lockMemoryBoard = false;
+      }, 700);
+    }
+
+    document.querySelector('#memory-reset').addEventListener('click', startMemoryGame);
+    startMemoryGame();
+
+    // Speed Challenge
+    const speedSymbols = ['⚡', '◆', '●', '▲'];
+    const speedTarget = document.querySelector('#speed-target');
+    const speedOptions = document.querySelector('#speed-options');
+    const speedStatus = document.querySelector('#speed-status');
+    let speedScore = 0;
+    let speedSeconds = 15;
+    let speedTimer = null;
+    let speedAnswer = '';
+
+    function makePattern() {
+      return Array.from({ length: 3 }, () => speedSymbols[Math.floor(Math.random() * speedSymbols.length)]).join(' ');
+    }
+
+    function showSpeedRound() {
+      speedAnswer = makePattern();
+      const wrongAnswers = [];
+      while (wrongAnswers.length < 2) {
+        const candidate = makePattern();
+        if (candidate !== speedAnswer && !wrongAnswers.includes(candidate)) wrongAnswers.push(candidate);
+      }
+      const options = shuffle([speedAnswer, ...wrongAnswers]);
+      speedTarget.textContent = speedAnswer;
+      speedOptions.replaceChildren();
+      options.forEach((pattern) => {
+        const option = document.createElement('button');
+        option.type = 'button';
+        option.textContent = pattern;
+        option.addEventListener('click', () => {
+          if (!speedTimer) return;
+          if (pattern === speedAnswer) {
+            speedScore += 1;
+            showSpeedRound();
+          } else {
+            speedStatus.textContent = `Wrong pattern! Score: ${speedScore} · Time: ${speedSeconds}`;
+          }
+        });
+        speedOptions.append(option);
+      });
+    }
+
+    function startSpeedGame() {
+      window.clearInterval(speedTimer);
+      speedScore = 0;
+      speedSeconds = 15;
+      document.querySelector('#speed-start').disabled = true;
+      showSpeedRound();
+      speedStatus.textContent = `Score: ${speedScore} · Time: ${speedSeconds}`;
+      speedTimer = window.setInterval(() => {
+        speedSeconds -= 1;
+        speedStatus.textContent = `Score: ${speedScore} · Time: ${speedSeconds}`;
+        if (speedSeconds <= 0) {
+          window.clearInterval(speedTimer);
+          speedTimer = null;
+          speedTarget.textContent = 'Time!';
+          speedOptions.replaceChildren();
+          speedStatus.textContent = `Final score: ${speedScore}`;
+          document.querySelector('#speed-start').disabled = false;
+        }
+      }, 1000);
+    }
+
+    document.querySelector('#speed-start').addEventListener('click', startSpeedGame);
+
+    // Void Breakout
+    const breakoutCanvas = document.querySelector('#breakout-canvas');
+    const breakoutContext = breakoutCanvas.getContext('2d');
+    const breakoutStatus = document.querySelector('#breakout-status');
+    let breakoutRunning = false;
+    let breakoutFrame = null;
+    let breakout = null;
+
+    function resetBreakout() {
+      breakout = {
+        paddle: { x: 125, width: 70 }, ball: { x: 160, y: 170, vx: 3, vy: -3, radius: 5 },
+        bricks: Array.from({ length: 30 }, (_, index) => ({ x: 12 + (index % 6) * 51, y: 25 + Math.floor(index / 6) * 18, alive: true })),
+        powerups: [], score: 0
+      };
+      drawBreakout();
+    }
+
+    function drawBreakout() {
+      const game = breakout;
+      breakoutContext.fillStyle = '#08030f';
+      breakoutContext.fillRect(0, 0, 320, 220);
+      game.bricks.forEach((brick) => {
+        if (!brick.alive) return;
+        breakoutContext.fillStyle = '#9b44ff';
+        breakoutContext.shadowColor = '#c972ff';
+        breakoutContext.shadowBlur = 10;
+        breakoutContext.fillRect(brick.x, brick.y, 43, 11);
+      });
+      breakoutContext.shadowBlur = 0;
+      breakoutContext.fillStyle = '#ff4d4f';
+      breakoutContext.fillRect(game.paddle.x, 202, game.paddle.width, 7);
+      breakoutContext.fillStyle = '#fff';
+      breakoutContext.beginPath();
+      breakoutContext.arc(game.ball.x, game.ball.y, game.ball.radius, 0, Math.PI * 2);
+      breakoutContext.fill();
+      game.powerups.forEach((powerup) => {
+        breakoutContext.fillStyle = powerup.type === 'wide' ? '#52e5ff' : '#ffe05c';
+        breakoutContext.fillRect(powerup.x, powerup.y, 9, 9);
+      });
+      breakoutContext.fillStyle = '#fff';
+      breakoutContext.font = '12px system-ui';
+      breakoutContext.fillText(`Score: ${game.score}`, 10, 214);
+    }
+
+    function endBreakout(message) {
+      breakoutRunning = false;
+      window.cancelAnimationFrame(breakoutFrame);
+      breakoutStatus.textContent = message;
+      document.querySelector('#breakout-start').disabled = false;
+    }
+
+    function updateBreakout() {
+      if (!breakoutRunning) return;
+      const game = breakout;
+      const ball = game.ball;
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+      if (ball.x < ball.radius || ball.x > 320 - ball.radius) ball.vx *= -1;
+      if (ball.y < ball.radius) ball.vy *= -1;
+      if (ball.y > 220) return endBreakout(`Void breach! Final score: ${game.score}`);
+      if (ball.y + ball.radius >= 202 && ball.x >= game.paddle.x && ball.x <= game.paddle.x + game.paddle.width && ball.vy > 0) {
+        ball.vy = -Math.abs(ball.vy);
+        ball.vx += (ball.x - (game.paddle.x + game.paddle.width / 2)) / 24;
+      }
+      game.bricks.forEach((brick) => {
+        if (!brick.alive || ball.x < brick.x || ball.x > brick.x + 43 || ball.y < brick.y || ball.y > brick.y + 11) return;
+        brick.alive = false;
+        ball.vy *= -1;
+        game.score += 10;
+        if (Math.random() < 0.22) game.powerups.push({ x: brick.x + 17, y: brick.y, type: Math.random() < 0.5 ? 'wide' : 'slow' });
+      });
+      game.powerups = game.powerups.filter((powerup) => {
+        powerup.y += 2;
+        if (powerup.y >= 193 && powerup.x >= game.paddle.x && powerup.x <= game.paddle.x + game.paddle.width) {
+          if (powerup.type === 'wide') game.paddle.width = Math.min(120, game.paddle.width + 24);
+          else { ball.vx *= 0.8; ball.vy *= 0.8; }
+          game.score += 25;
+          return false;
+        }
+        return powerup.y < 220;
+      });
+      if (game.bricks.every((brick) => !brick.alive)) return endBreakout(`Barrier destroyed! Score: ${game.score}`);
+      drawBreakout();
+      breakoutFrame = window.requestAnimationFrame(updateBreakout);
+    }
+
+    function startBreakout() {
+      resetBreakout();
+      breakoutRunning = true;
+      document.querySelector('#breakout-start').disabled = true;
+      breakoutStatus.textContent = 'Purple = bricks · blue = wide paddle · gold = slow time.';
+      updateBreakout();
+    }
+
+    breakoutCanvas.addEventListener('pointermove', (event) => {
+      const bounds = breakoutCanvas.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) * (320 / bounds.width);
+      breakout.paddle.x = Math.max(0, Math.min(320 - breakout.paddle.width, x - breakout.paddle.width / 2));
+    });
+    document.querySelector('#breakout-start').addEventListener('click', startBreakout);
+    resetBreakout();
+
+    // Void Mines
+    const minesBoard = document.querySelector('#mines-board');
+    const minesStatus = document.querySelector('#mines-status');
+    const mineSize = 8;
+    const mineCount = 10;
+    let mineCells = [];
+    let mineGameOver = false;
+
+    function buildMinefield() {
+      mineGameOver = false;
+      const mineLocations = new Set();
+      while (mineLocations.size < mineCount) mineLocations.add(Math.floor(Math.random() * mineSize * mineSize));
+      mineCells = Array.from({ length: mineSize * mineSize }, (_, index) => ({ mine: mineLocations.has(index), open: false, flagged: false }));
+      minesBoard.replaceChildren();
+      mineCells.forEach((cell, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', `Mine cell ${index + 1}`);
+        button.addEventListener('click', (event) => openMineCell(index, event.shiftKey));
+        button.addEventListener('contextmenu', (event) => { event.preventDefault(); openMineCell(index, true); });
+        minesBoard.append(button);
+      });
+      minesStatus.textContent = `${mineCount} void mines are hidden.`;
+    }
+
+    function mineNeighbours(index) {
+      const row = Math.floor(index / mineSize);
+      const column = index % mineSize;
+      const neighbours = [];
+      for (let y = row - 1; y <= row + 1; y += 1) for (let x = column - 1; x <= column + 1; x += 1) {
+        if (x >= 0 && x < mineSize && y >= 0 && y < mineSize && !(x === column && y === row)) neighbours.push(y * mineSize + x);
+      }
+      return neighbours;
+    }
+
+    function renderMinefield() {
+      mineCells.forEach((cell, index) => {
+        const button = minesBoard.children[index];
+        const nearby = mineNeighbours(index).filter((neighbour) => mineCells[neighbour].mine).length;
+        button.className = cell.open ? 'open' : cell.flagged ? 'flagged' : '';
+        button.textContent = cell.open ? (cell.mine ? '✹' : nearby || '') : cell.flagged ? '⚑' : '';
+      });
+    }
+
+    function openMineCell(index, flagOnly) {
+      if (mineGameOver) return;
+      const cell = mineCells[index];
+      if (flagOnly && !cell.open) { cell.flagged = !cell.flagged; renderMinefield(); return; }
+      if (cell.open || cell.flagged) return;
+      cell.open = true;
+      if (cell.mine) {
+        mineGameOver = true;
+        mineCells.forEach((item) => { if (item.mine) item.open = true; });
+        minesStatus.textContent = 'A void mine woke up! Try a new field.';
+      } else {
+        const nearby = mineNeighbours(index).filter((neighbour) => mineCells[neighbour].mine).length;
+        if (!nearby) mineNeighbours(index).forEach((neighbour) => openMineCell(neighbour, false));
+        if (mineCells.filter((item) => !item.mine && item.open).length === mineSize * mineSize - mineCount) {
+          mineGameOver = true;
+          minesStatus.textContent = 'Field cleared! You win.';
+        }
+      }
+      renderMinefield();
+    }
+
+    document.querySelector('#mines-reset').addEventListener('click', buildMinefield);
+    buildMinefield();
+
+    // Void Runner — an original lane-based void tunnel runner
+    const runnerCanvas = document.querySelector('#runner-canvas');
+    const runnerContext = runnerCanvas.getContext('2d');
+    const runnerStatus = document.querySelector('#runner-status');
+    let runner = null;
+    let runnerFrame = null;
+    let runnerRunning = false;
+
+    const runnerLanes = [43, 90, 137];
+
+    function drawRunner() {
+      runnerContext.fillStyle = '#08030f';
+      runnerContext.fillRect(0, 0, 320, 180);
+      runnerContext.strokeStyle = '#5a1e90';
+      runnerContext.lineWidth = 2;
+      runnerContext.strokeRect(12, 14, 296, 152);
+      runnerLanes.forEach((laneY) => {
+        runnerContext.beginPath();
+        runnerContext.moveTo(12, laneY);
+        runnerContext.lineTo(308, laneY);
+        runnerContext.stroke();
+      });
+      for (let x = 20; x < 320; x += 42) {
+        runnerContext.strokeStyle = '#31104d';
+        runnerContext.beginPath(); runnerContext.moveTo(x, 15); runnerContext.lineTo(x - 35, 165); runnerContext.stroke();
+      }
+      runner.gaps.forEach((gap) => {
+        const y = runnerLanes[gap.lane] - 17;
+        runnerContext.fillStyle = '#000'; runnerContext.fillRect(gap.x, y, gap.width, 34);
+        runnerContext.strokeStyle = '#c972ff'; runnerContext.strokeRect(gap.x, y, gap.width, 34);
+      });
+      runnerContext.fillStyle = '#ff4d4f';
+      runnerContext.beginPath(); runnerContext.arc(60, runner.playerY, 10, 0, Math.PI * 2); runnerContext.fill();
+      runnerContext.fillStyle = '#fff'; runnerContext.font = '12px system-ui'; runnerContext.fillText(`Distance: ${runner.score}`, 10, 178);
+    }
+
+    function moveRunner(direction) {
+      if (!runnerRunning) return;
+      runner.lane = Math.max(0, Math.min(runnerLanes.length - 1, runner.lane + direction));
+    }
+    function stopRunner() { runnerRunning = false; window.cancelAnimationFrame(runnerFrame); runnerStatus.textContent = `You fell through a broken panel! Distance: ${runner.score}`; document.querySelector('#runner-start').disabled = false; }
+    function updateRunner() {
+      if (!runnerRunning) return;
+      runner.playerY += (runnerLanes[runner.lane] - runner.playerY) * 0.2;
+      runner.gaps.forEach((gap) => { gap.x -= runner.speed; });
+      runner.gaps = runner.gaps.filter((gap) => gap.x + gap.width > -5);
+      runner.spawnIn -= runner.speed;
+      if (runner.spawnIn <= 0) {
+        runner.gaps.push({ x: 330, width: 30 + Math.floor(Math.random() * 20), lane: Math.floor(Math.random() * runnerLanes.length) });
+        runner.spawnIn = 105 + Math.random() * 85;
+      }
+      if (runner.gaps.some((gap) => gap.lane === runner.lane && gap.x < 70 && gap.x + gap.width > 50)) return stopRunner();
+      runner.score += 1;
+      runner.speed = Math.min(7, 3 + runner.score / 350);
+      drawRunner();
+      runnerFrame = window.requestAnimationFrame(updateRunner);
+    }
+    function startRunner() {
+      runner = { lane: 1, playerY: runnerLanes[1], gaps: [], score: 0, speed: 3, spawnIn: 145 };
+      runnerRunning = true;
+      document.querySelector('#runner-start').disabled = true;
+      runnerStatus.textContent = 'Stay on a solid lane!';
+      updateRunner();
+    }
+    runnerCanvas.addEventListener('pointerdown', (event) => {
+      const bounds = runnerCanvas.getBoundingClientRect();
+      const y = (event.clientY - bounds.top) * (180 / bounds.height);
+      const closestLane = runnerLanes.reduce((best, lane, index) => Math.abs(lane - y) < Math.abs(runnerLanes[best] - y) ? index : best, 0);
+      if (runnerRunning) runner.lane = closestLane;
+    });
+    window.addEventListener('keydown', (event) => {
+      if (!runnerRunning) return;
+      if (event.code === 'ArrowLeft' || event.code === 'KeyA') { event.preventDefault(); moveRunner(-1); }
+      if (event.code === 'ArrowRight' || event.code === 'KeyD') { event.preventDefault(); moveRunner(1); }
+    });
+    document.querySelector('#runner-start').addEventListener('click', startRunner);
+    runner = { lane: 1, playerY: runnerLanes[1], gaps: [], score: 0 }; drawRunner();
 
     const sectionSounds = [
       { section: document.querySelector('#home'), sound: document.querySelector('#home-sound') },
@@ -366,18 +792,21 @@
     let playingSound = null;
 
     function playSectionSound(sound) {
-      if (sound.dataset.played === 'true') return;
+      if (sound.dataset.played === 'true' || playingSound === sound) return;
 
       if (playingSound && playingSound !== sound) {
         playingSound.pause();
         playingSound.currentTime = 0;
       }
 
+      // Set this before play() finishes. Two sections can enter view in the
+      // same moment, and this makes the later one stop the earlier one.
+      playingSound = sound;
       sound.play().then(() => {
         sound.dataset.played = 'true';
-        playingSound = sound;
       }).catch(() => {
         // Browsers require a first tap/key press before audible autoplay is allowed.
+        if (playingSound === sound) playingSound = null;
       });
     }
 
@@ -408,4 +837,3 @@
   </script>
 </body>
 </html>
-s so
