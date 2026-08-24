@@ -365,10 +365,10 @@
         </div>
         <div class="minigame">
           <h3>🏃 Void Runner</h3>
-          <p>Race through the void tunnel. Move between lanes to avoid broken panels.</p>
-          <canvas class="arcade-canvas" id="runner-canvas" width="320" height="180" aria-label="Void Runner game"></canvas>
+          <p>Race through the void tunnel. Move between lanes and jump broken panels.</p>
+          <canvas class="arcade-canvas" id="runner-canvas" width="640" height="360" aria-label="Void Runner game"></canvas>
           <button class="btn" id="runner-start" type="button">Start Void Runner</button>
-          <p class="game-status" id="runner-status" aria-live="polite">Use A/D or ←/→ to move around the tunnel.</p>
+          <p class="game-status" id="runner-status" aria-live="polite">Use A/D or ←/→ to move, and Space or ↑ to jump.</p>
         </div>
       </div>
     </div>
@@ -702,83 +702,168 @@
     document.querySelector('#mines-reset').addEventListener('click', buildMinefield);
     buildMinefield();
 
-    // Void Runner — an original lane-based void tunnel runner
+    // Void Runner — a WebGL 3D tunnel runner
     const runnerCanvas = document.querySelector('#runner-canvas');
-    const runnerContext = runnerCanvas.getContext('2d');
+    const runnerGl = runnerCanvas.getContext('webgl', { antialias: true });
     const runnerStatus = document.querySelector('#runner-status');
     let runner = null;
     let runnerFrame = null;
     let runnerRunning = false;
 
-    const runnerLanes = [43, 90, 137];
+    function makeRunnerProgram(gl) {
+      const vertexSource = 'attribute vec3 position; uniform vec4 color; uniform float cameraAngle; varying vec4 vColor; void main() { float depth = 0.55 + position.z * 0.075; float fog = 1.45 / (1.0 + position.z * 0.05); float c = cos(cameraAngle); float s = sin(cameraAngle); vec2 rotated = vec2(position.x * c - position.y * s, position.x * s + position.y * c); gl_Position = vec4(rotated / depth, 0.0, 1.0); gl_PointSize = max(1.0, 4.0 / depth); vColor = vec4(color.rgb * fog, color.a); }';
+      const fragmentSource = 'precision mediump float; varying vec4 vColor; void main() { gl_FragColor = vColor; }';
+      const compile = (type, source) => { const shader = gl.createShader(type); gl.shaderSource(shader, source); gl.compileShader(shader); return shader; };
+      const program = gl.createProgram();
+      gl.attachShader(program, compile(gl.VERTEX_SHADER, vertexSource));
+      gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragmentSource));
+      gl.linkProgram(program);
+      return program;
+    }
+
+    const runnerProgram = runnerGl ? makeRunnerProgram(runnerGl) : null;
+    const runnerBuffer = runnerGl ? runnerGl.createBuffer() : null;
+    const runnerStars = Array.from({ length: 110 }, () => ({
+      x: (Math.random() - 0.5) * 5,
+      y: (Math.random() - 0.5) * 5,
+      z: 3 + Math.random() * 42
+    }));
+
+    function runnerShape(mode, points, color) {
+      const gl = runnerGl;
+      gl.useProgram(runnerProgram);
+      gl.bindBuffer(gl.ARRAY_BUFFER, runnerBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STREAM_DRAW);
+      const position = gl.getAttribLocation(runnerProgram, 'position');
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
+      gl.uniform4fv(gl.getUniformLocation(runnerProgram, 'color'), color);
+      const displayedWall = runner && typeof runner.displayWall === 'number' ? runner.displayWall : 0;
+      const playerAngle = runnerBaseAngle + ((displayedWall + 0.5) / runnerSides) * Math.PI * 2;
+      gl.uniform1f(gl.getUniformLocation(runnerProgram, 'cameraAngle'), -Math.PI / 2 - playerAngle);
+      gl.drawArrays(mode, 0, points.length / 3);
+    }
+
+    function runnerQuad(a, b, c, d, color) { runnerShape(runnerGl.TRIANGLES, [...a, ...b, ...c, ...a, ...c, ...d], color); }
+    function runnerLine(a, b, color) { runnerShape(runnerGl.LINES, [...a, ...b], color); }
+    const runnerSides = 8;
+    const runnerBaseAngle = -Math.PI / 2;
+    function tunnelPoint(side, z, radius = 1) {
+      const angle = runnerBaseAngle + (side / runnerSides) * Math.PI * 2;
+      return [Math.cos(angle) * radius, Math.sin(angle) * radius, z];
+    }
+    function tunnelWall(wall, near, far, color) {
+      const a = tunnelPoint(wall, near);
+      const b = tunnelPoint(wall + 1, near);
+      const c = tunnelPoint(wall + 1, far);
+      const d = tunnelPoint(wall, far);
+      runnerQuad(a, b, c, d, color);
+    }
+
+    function runnerCube(x, y, z, size, frontColor = [1, 0.3, 0.31, 1], sideColor = [1, 0.65, 0.2, 1]) {
+      const s = size;
+      runnerQuad([x-s,y-s,z-s], [x+s,y-s,z-s], [x+s,y+s,z-s], [x-s,y+s,z-s], frontColor);
+      runnerQuad([x-s,y-s,z+s], [x+s,y-s,z+s], [x+s,y+s,z+s], [x-s,y+s,z+s], sideColor);
+      runnerQuad([x-s,y-s,z-s], [x-s,y-s,z+s], [x-s,y+s,z+s], [x-s,y+s,z-s], frontColor);
+      runnerQuad([x+s,y-s,z+s], [x+s,y-s,z-s], [x+s,y+s,z-s], [x+s,y+s,z+s], sideColor);
+    }
 
     function drawRunner() {
-      runnerContext.fillStyle = '#08030f';
-      runnerContext.fillRect(0, 0, 320, 180);
-      runnerContext.strokeStyle = '#5a1e90';
-      runnerContext.lineWidth = 2;
-      runnerContext.strokeRect(12, 14, 296, 152);
-      runnerLanes.forEach((laneY) => {
-        runnerContext.beginPath();
-        runnerContext.moveTo(12, laneY);
-        runnerContext.lineTo(308, laneY);
-        runnerContext.stroke();
-      });
-      for (let x = 20; x < 320; x += 42) {
-        runnerContext.strokeStyle = '#31104d';
-        runnerContext.beginPath(); runnerContext.moveTo(x, 15); runnerContext.lineTo(x - 35, 165); runnerContext.stroke();
+      if (!runnerGl) return;
+      const gl = runnerGl;
+      gl.viewport(0, 0, runnerCanvas.width, runnerCanvas.height);
+      gl.clearColor(0.02, 0.005, 0.05, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      runnerShape(gl.POINTS, runnerStars.flatMap((star) => [star.x, star.y, star.z]), [0.65, 0.38, 1, 1]);
+      for (let z = 38; z > 1; z -= 2) {
+        for (let wall = 0; wall < runnerSides; wall += 1) {
+          const hasGap = runner.gaps.some((gap) => gap.wall === wall && gap.z < z + 2 && gap.z + gap.length > z);
+          if (!hasGap) tunnelWall(wall, z, z + 1.9, wall % 2 ? [0.19, 0.035, 0.34, 1] : [0.31, 0.065, 0.53, 1]);
+        }
+        const corners = Array.from({ length: runnerSides }, (_, side) => tunnelPoint(side, z));
+        const ringGlow = z % 4 === 0 ? [1, 0.2, 0.55, 1] : [0.82, 0.34, 1, 1];
+        for (let corner = 0; corner < runnerSides; corner += 1) runnerLine(corners[corner], corners[(corner + 1) % runnerSides], ringGlow);
       }
       runner.gaps.forEach((gap) => {
-        const y = runnerLanes[gap.lane] - 17;
-        runnerContext.fillStyle = '#000'; runnerContext.fillRect(gap.x, y, gap.width, 34);
-        runnerContext.strokeStyle = '#c972ff'; runnerContext.strokeRect(gap.x, y, gap.width, 34);
+        tunnelWall(gap.wall, gap.z - 0.04, gap.z + gap.length + 0.04, [0.02, 0, 0.04, 1]);
       });
-      runnerContext.fillStyle = '#ff4d4f';
-      runnerContext.beginPath(); runnerContext.arc(60, runner.playerY, 10, 0, Math.PI * 2); runnerContext.fill();
-      runnerContext.fillStyle = '#fff'; runnerContext.font = '12px system-ui'; runnerContext.fillText(`Distance: ${runner.score}`, 10, 178);
+      runner.cores.forEach((core) => {
+        const coreAngle = runnerBaseAngle + ((core.wall + 0.5) / runnerSides) * Math.PI * 2;
+        runnerCube(Math.cos(coreAngle) * 0.79, Math.sin(coreAngle) * 0.79, core.z, 0.09, [0.25, 0.95, 1, 1], [0.95, 0.82, 0.2, 1]);
+      });
+      const playerAngle = runnerBaseAngle + ((runner.displayWall + 0.5) / runnerSides) * Math.PI * 2;
+      const radius = 0.8 - runner.jumpHeight * 0.55;
+      runnerCube(Math.cos(playerAngle) * radius, Math.sin(playerAngle) * radius, 2.2, 0.12, runner.shield ? [0.25, 0.95, 1, 1] : [1, 0.3, 0.31, 1], runner.shield ? [0.75, 0.4, 1, 1] : [1, 0.65, 0.2, 1]);
     }
 
-    function moveRunner(direction) {
-      if (!runnerRunning) return;
-      runner.lane = Math.max(0, Math.min(runnerLanes.length - 1, runner.lane + direction));
-    }
-    function stopRunner() { runnerRunning = false; window.cancelAnimationFrame(runnerFrame); runnerStatus.textContent = `You fell through a broken panel! Distance: ${runner.score}`; document.querySelector('#runner-start').disabled = false; }
+    function moveRunner(direction) { if (runnerRunning) runner.wall = (runner.wall + direction + runnerSides) % runnerSides; }
+    function jumpRunner() { if (runnerRunning && runner.jumpHeight === 0) runner.jumpVelocity = 0.065; }
+    function stopRunner() { runnerRunning = false; window.cancelAnimationFrame(runnerFrame); runnerStatus.textContent = `You fell into the void! Distance: ${runner.score}`; document.querySelector('#runner-start').disabled = false; }
     function updateRunner() {
       if (!runnerRunning) return;
-      runner.playerY += (runnerLanes[runner.lane] - runner.playerY) * 0.2;
-      runner.gaps.forEach((gap) => { gap.x -= runner.speed; });
-      runner.gaps = runner.gaps.filter((gap) => gap.x + gap.width > -5);
+      let wallDifference = runner.wall - runner.displayWall;
+      if (wallDifference > runnerSides / 2) wallDifference -= runnerSides;
+      if (wallDifference < -runnerSides / 2) wallDifference += runnerSides;
+      runner.displayWall += wallDifference * 0.18;
+      runner.jumpHeight = Math.max(0, runner.jumpHeight + runner.jumpVelocity);
+      runner.jumpVelocity -= 0.004;
+      if (runner.jumpHeight === 0) runner.jumpVelocity = 0;
+      runnerStars.forEach((star) => {
+        star.z -= runner.speed * 0.65;
+        if (star.z < 1) {
+          star.x = (Math.random() - 0.5) * 5;
+          star.y = (Math.random() - 0.5) * 5;
+          star.z = 42;
+        }
+      });
+      runner.gaps.forEach((gap) => { gap.z -= runner.speed; });
+      runner.gaps = runner.gaps.filter((gap) => gap.z + gap.length > 0.5);
+      runner.cores.forEach((core) => { core.z -= runner.speed; });
+      runner.cores = runner.cores.filter((core) => {
+        if (core.wall === runner.wall && core.z < 2.7 && core.z > 1.5) {
+          runner.shield = true;
+          runner.score += 150;
+          runnerStatus.textContent = 'Void core collected — shield armed!';
+          return false;
+        }
+        return core.z > 0.5;
+      });
       runner.spawnIn -= runner.speed;
-      if (runner.spawnIn <= 0) {
-        runner.gaps.push({ x: 330, width: 30 + Math.floor(Math.random() * 20), lane: Math.floor(Math.random() * runnerLanes.length) });
-        runner.spawnIn = 105 + Math.random() * 85;
+      if (runner.spawnIn <= 0) { runner.gaps.push({ z: 34, length: 2.6, wall: Math.floor(Math.random() * runnerSides) }); runner.spawnIn = 7 + Math.random() * 7; }
+      runner.coreSpawnIn -= runner.speed;
+      if (runner.coreSpawnIn <= 0) { runner.cores.push({ z: 32, wall: Math.floor(Math.random() * runnerSides) }); runner.coreSpawnIn = 15 + Math.random() * 10; }
+      const hittingGap = runner.gaps.find((gap) => gap.wall === runner.wall && gap.z < 2.5 && gap.z + gap.length > 1.8);
+      if (hittingGap && runner.jumpHeight < 0.28) {
+        if (runner.shield) {
+          runner.shield = false;
+          runner.gaps = runner.gaps.filter((gap) => gap !== hittingGap);
+          runnerStatus.textContent = 'Shield saved you from the void!';
+        } else return stopRunner();
       }
-      if (runner.gaps.some((gap) => gap.lane === runner.lane && gap.x < 70 && gap.x + gap.width > 50)) return stopRunner();
       runner.score += 1;
-      runner.speed = Math.min(7, 3 + runner.score / 350);
+      runner.speed = Math.min(0.22, 0.075 + runner.score / 24000);
+      if (runner.score % 30 === 0) runnerStatus.textContent = `Distance: ${runner.score} · Shield: ${runner.shield ? 'READY' : 'none'}`;
       drawRunner();
       runnerFrame = window.requestAnimationFrame(updateRunner);
     }
     function startRunner() {
-      runner = { lane: 1, playerY: runnerLanes[1], gaps: [], score: 0, speed: 3, spawnIn: 145 };
+      if (!runnerGl) { runnerStatus.textContent = 'Your browser needs WebGL enabled to play Void Runner.'; return; }
+      runner = { wall: 0, displayWall: 0, jumpHeight: 0, jumpVelocity: 0, gaps: [], cores: [], shield: false, score: 0, speed: 0.075, spawnIn: 10, coreSpawnIn: 13 };
       runnerRunning = true;
       document.querySelector('#runner-start').disabled = true;
-      runnerStatus.textContent = 'Stay on a solid lane!';
+      runnerStatus.textContent = 'Move around the 3D tunnel and jump the void gaps!';
       updateRunner();
     }
-    runnerCanvas.addEventListener('pointerdown', (event) => {
-      const bounds = runnerCanvas.getBoundingClientRect();
-      const y = (event.clientY - bounds.top) * (180 / bounds.height);
-      const closestLane = runnerLanes.reduce((best, lane, index) => Math.abs(lane - y) < Math.abs(runnerLanes[best] - y) ? index : best, 0);
-      if (runnerRunning) runner.lane = closestLane;
-    });
+    runnerCanvas.addEventListener('pointerdown', (event) => { if (runnerRunning) { const bounds = runnerCanvas.getBoundingClientRect(); moveRunner(event.clientX - bounds.left < bounds.width / 2 ? -1 : 1); } });
     window.addEventListener('keydown', (event) => {
       if (!runnerRunning) return;
       if (event.code === 'ArrowLeft' || event.code === 'KeyA') { event.preventDefault(); moveRunner(-1); }
       if (event.code === 'ArrowRight' || event.code === 'KeyD') { event.preventDefault(); moveRunner(1); }
+      if (event.code === 'ArrowUp' || event.code === 'KeyW' || event.code === 'Space') { event.preventDefault(); jumpRunner(); }
     });
     document.querySelector('#runner-start').addEventListener('click', startRunner);
-    runner = { lane: 1, playerY: runnerLanes[1], gaps: [], score: 0 }; drawRunner();
+    runner = { wall: 0, displayWall: 0, jumpHeight: 0, gaps: [], cores: [], shield: false, score: 0 };
+    if (runnerGl) drawRunner();
 
     const sectionSounds = [
       { section: document.querySelector('#home'), sound: document.querySelector('#home-sound') },

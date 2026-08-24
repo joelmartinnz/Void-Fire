@@ -104,6 +104,7 @@ html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Seg
 .speed-target{margin:1rem 0 0.6rem;padding:0.75rem;border:1px solid var(--accent);border-radius:4px;letter-spacing:0.2rem;font-size:1.35rem;font-weight:800;color:#ff9a3d}
 .speed-options{display:grid;gap:0.45rem}.speed-options button{padding:0.55rem;letter-spacing:0.15rem}.speed-options button:hover{background:#692018}
 .arcade-canvas{display:block;width:100%;height:auto;background:#08030f;border:1px solid #9b44ff;border-radius:4px;touch-action:none}
+#runner-canvas{border-color:#c972ff;box-shadow:0 0 12px rgba(155,68,255,0.55),inset 0 0 18px rgba(255,77,79,0.2)}
 .mines-board{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;max-width:280px;margin:0 auto}
 .mines-board button{aspect-ratio:1;border:1px solid #9b44ff;border-radius:3px;background:#250606;color:#fff;font-weight:800;cursor:pointer}
 .mines-board button.open{background:#4d214f;color:#ffe05c}.mines-board button.flagged{background:#692018;color:#52e5ff}
