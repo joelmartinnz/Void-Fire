@@ -236,7 +236,7 @@
           <div class="shop-item-body">
             <p class="item-type">TABLE CONTROL</p>
             <h3>Void Dice Tray</h3>
-            <p>Keep every roll contained with a fold-flat, fire-lined tray.</p>
+            <p>Keep every roll contained with a fold-flat, impact-lined tray.</p>
             <strong>$24</strong>
           </div>
         </article>
@@ -291,7 +291,7 @@
         </article>
         <article class="merch-item">
           <div class="merch-image merch-cap"><span>VF</span></div>
-          <div class="merch-item-body"><h3>Ember Cap</h3><p>Low-profile cap with a stitched flame insignia.</p><strong>$26</strong></div>
+          <div class="merch-item-body"><h3>Marksman Cap</h3><p>Low-profile cap with a stitched targeting-reticle insignia.</p><strong>$26</strong></div>
         </article>
         <article class="merch-item">
           <div class="merch-image merch-hoodie"><span>STAY<br>ALIVE</span></div>
@@ -303,7 +303,7 @@
         </article>
         <article class="merch-item">
           <div class="merch-image merch-stapler"><span>VF</span><small>STAPLER</small></div>
-          <div class="merch-item-body"><h3>Voidfire Stapler</h3><p>Seal your mission notes with a flash of fire.</p><strong>$18</strong></div>
+          <div class="merch-item-body"><h3>Voidfire Stapler</h3><p>Seal your mission notes with a tactical burst.</p><strong>$18</strong></div>
         </article>
         
         <article class="Edacitis-Book_of_Cook">
@@ -335,11 +335,11 @@
           <p class="game-status" id="roll-status" aria-live="polite">Choose a number to begin.</p>
         </div>
         <div class="minigame">
-          <h3>🔥 Flame Match</h3>
+          <h3>🎯 Signal Match</h3>
           <p>Find all three matching pairs.</p>
-          <div class="memory-grid" id="memory-grid" aria-label="Flame Match cards"></div>
+          <div class="memory-grid" id="memory-grid" aria-label="Signal Match cards"></div>
           <button class="btn" id="memory-reset" type="button">New game</button>
-          <p class="game-status" id="memory-status" aria-live="polite">Find the matching flames.</p>
+          <p class="game-status" id="memory-status" aria-live="polite">Find the matching signals.</p>
         </div>
         <div class="minigame">
           <h3>⚡ Speed Challenge</h3>
@@ -351,7 +351,7 @@
         </div>
         <div class="minigame">
           <h3>🟣 Void Breakout</h3>
-          <p>Break the purple-fire barrier. Catch power-ups to survive longer.</p>
+          <p>Break the purple target barrier. Catch power-ups to survive longer.</p>
           <canvas class="arcade-canvas" id="breakout-canvas" width="320" height="220" aria-label="Void Breakout game"></canvas>
           <button class="btn" id="breakout-start" type="button">Start Void Breakout</button>
           <p class="game-status" id="breakout-status" aria-live="polite">Move the paddle with your mouse or finger.</p>
@@ -367,6 +367,7 @@
           <h3>🏃 Void Runner</h3>
           <p>Race through the void tunnel. Move between lanes and jump broken panels.</p>
           <canvas class="arcade-canvas" id="runner-canvas" width="640" height="360" aria-label="Void Runner game"></canvas>
+          <div class="runner-hud" aria-live="polite"><span id="runner-distance">DIST 0</span><span id="runner-zone">ZONE 1</span><span id="runner-lives">LIVES ♥♥♥</span><span id="runner-shield">SHIELD OFF</span></div>
           <button class="btn" id="runner-start" type="button">Start Void Runner</button>
           <p class="game-status" id="runner-status" aria-live="polite">Use A/D or ←/→ to move, and Space or ↑ to jump.</p>
         </div>
@@ -405,8 +406,8 @@
       rollStatus.textContent = `${won ? 'Direct hit!' : 'Miss!'} You rolled ${roll}. Score: ${rollScore}`;
     });
 
-    // Flame Match
-    const flameSymbols = ['🔥', '☄️', '🌋'];
+    // Signal Match
+    const signalSymbols = ['◉', '✦', '◆'];
     let flippedCards = [];
     let matchedCards = 0;
     let lockMemoryBoard = false;
@@ -421,9 +422,9 @@
       flippedCards = [];
       matchedCards = 0;
       lockMemoryBoard = false;
-      memoryStatus.textContent = 'Find the matching flames.';
+      memoryStatus.textContent = 'Find the matching signals.';
       memoryGrid.replaceChildren();
-      shuffle([...flameSymbols, ...flameSymbols]).forEach((symbol) => {
+      shuffle([...signalSymbols, ...signalSymbols]).forEach((symbol) => {
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'memory-card';
@@ -448,7 +449,7 @@
         second.classList.add('matched');
         flippedCards = [];
         matchedCards += 1;
-        memoryStatus.textContent = matchedCards === flameSymbols.length ? 'You matched every flame!' : 'Match found! Keep going.';
+        memoryStatus.textContent = matchedCards === signalSymbols.length ? 'You matched every signal!' : 'Match found! Keep going.';
         return;
       }
 
@@ -706,6 +707,10 @@
     const runnerCanvas = document.querySelector('#runner-canvas');
     const runnerGl = runnerCanvas.getContext('webgl', { antialias: true });
     const runnerStatus = document.querySelector('#runner-status');
+    const runnerDistance = document.querySelector('#runner-distance');
+    const runnerZone = document.querySelector('#runner-zone');
+    const runnerLives = document.querySelector('#runner-lives');
+    const runnerShield = document.querySelector('#runner-shield');
     let runner = null;
     let runnerFrame = null;
     let runnerRunning = false;
@@ -799,6 +804,12 @@
     function moveRunner(direction) { if (runnerRunning) runner.wall = (runner.wall + direction + runnerSides) % runnerSides; }
     function jumpRunner() { if (runnerRunning && runner.jumpHeight === 0) runner.jumpVelocity = 0.065; }
     function stopRunner() { runnerRunning = false; window.cancelAnimationFrame(runnerFrame); runnerStatus.textContent = `You fell into the void! Distance: ${runner.score}`; document.querySelector('#runner-start').disabled = false; }
+    function updateRunnerHud() {
+      runnerDistance.textContent = `DIST ${runner.score}`;
+      runnerZone.textContent = `ZONE ${runner.zone}`;
+      runnerLives.textContent = `LIVES ${'♥'.repeat(runner.lives)}${'♡'.repeat(3 - runner.lives)}`;
+      runnerShield.textContent = runner.shield ? 'SHIELD READY' : 'SHIELD OFF';
+    }
     function updateRunner() {
       if (!runnerRunning) return;
       let wallDifference = runner.wall - runner.displayWall;
@@ -838,20 +849,29 @@
           runner.shield = false;
           runner.gaps = runner.gaps.filter((gap) => gap !== hittingGap);
           runnerStatus.textContent = 'Shield saved you from the void!';
-        } else return stopRunner();
+        } else {
+          runner.lives -= 1;
+          runner.gaps = runner.gaps.filter((gap) => gap !== hittingGap);
+          if (runner.lives <= 0) return stopRunner();
+          runnerStatus.textContent = `Hull damaged! ${runner.lives} lives left.`;
+        }
       }
       runner.score += 1;
-      runner.speed = Math.min(0.22, 0.075 + runner.score / 24000);
+      runner.zone = Math.floor(runner.score / 600) + 1;
+      runner.speed = Math.min(0.28, 0.075 + runner.score / 18000);
+      if (runner.score % 600 === 0) runnerStatus.textContent = `Zone ${runner.zone} reached — tunnel speed increased!`;
       if (runner.score % 30 === 0) runnerStatus.textContent = `Distance: ${runner.score} · Shield: ${runner.shield ? 'READY' : 'none'}`;
+      if (runner.score % 10 === 0) updateRunnerHud();
       drawRunner();
       runnerFrame = window.requestAnimationFrame(updateRunner);
     }
     function startRunner() {
       if (!runnerGl) { runnerStatus.textContent = 'Your browser needs WebGL enabled to play Void Runner.'; return; }
-      runner = { wall: 0, displayWall: 0, jumpHeight: 0, jumpVelocity: 0, gaps: [], cores: [], shield: false, score: 0, speed: 0.075, spawnIn: 10, coreSpawnIn: 13 };
+      runner = { wall: 0, displayWall: 0, jumpHeight: 0, jumpVelocity: 0, gaps: [], cores: [], shield: false, score: 0, lives: 3, zone: 1, speed: 0.075, spawnIn: 10, coreSpawnIn: 13 };
       runnerRunning = true;
       document.querySelector('#runner-start').disabled = true;
       runnerStatus.textContent = 'Move around the 3D tunnel and jump the void gaps!';
+      updateRunnerHud();
       updateRunner();
     }
     runnerCanvas.addEventListener('pointerdown', (event) => { if (runnerRunning) { const bounds = runnerCanvas.getBoundingClientRect(); moveRunner(event.clientX - bounds.left < bounds.width / 2 ? -1 : 1); } });
@@ -862,7 +882,8 @@
       if (event.code === 'ArrowUp' || event.code === 'KeyW' || event.code === 'Space') { event.preventDefault(); jumpRunner(); }
     });
     document.querySelector('#runner-start').addEventListener('click', startRunner);
-    runner = { wall: 0, displayWall: 0, jumpHeight: 0, gaps: [], cores: [], shield: false, score: 0 };
+    runner = { wall: 0, displayWall: 0, jumpHeight: 0, gaps: [], cores: [], shield: false, score: 0, lives: 3, zone: 1 };
+    updateRunnerHud();
     if (runnerGl) drawRunner();
 
     const sectionSounds = [
