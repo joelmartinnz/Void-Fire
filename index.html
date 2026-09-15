@@ -14,7 +14,6 @@
   <audio id="rules-sound" src="dragon-studio-monster-growl-376892.mp3" preload="metadata"></audio>
   <audio id="pricing-sound" src="freesound_community-good-6081.mp3" preload="metadata"></audio>
   <audio id="swag-sound" src="freesound_community-space-music-end-of-time-cilp-by-kris-klavenes-220417-17436.mp3" preload="metadata"></audio>
-  <audio id="minigames-sound" src="olivia_parker-fun-comedic-drum-demo-306644.mp3" preload="metadata"></audio>
 
   <!-- NAVIGATION -->
   <nav class="navbar">
@@ -28,13 +27,28 @@
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="#supplies">Supplies</a></li>
         <li><a href="#merchandise">Swag</a></li>
-        <li><a href="#minigames">Mini Games</a></li>
       </ul>
     </div>
   </nav>
 
   <!-- HOME SECTION -->
   <section id="home" class="hero">
+    <svg class="lightning-field" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+      <g class="lightning-strike lightning-strike-one">
+        <path d="M160 -30 L145 72 L190 105 L132 188 L176 222 L108 315 L145 348 L78 485" />
+        <path d="M146 72 L78 32 L48 -18" />
+        <path d="M132 188 L68 176 L25 125" />
+      </g>
+      <g class="lightning-strike lightning-strike-two">
+        <path d="M770 -30 L792 72 L752 112 L812 194 L765 238 L842 326 L805 360 L875 500" />
+        <path d="M792 72 L860 40 L908 -18" />
+        <path d="M812 194 L875 180 L930 130" />
+      </g>
+      <g class="lightning-strike lightning-strike-three">
+        <path d="M530 -20 L512 72 L548 100 L500 172 L535 206 L480 275" />
+        <path d="M512 72 L462 38 L430 -8" />
+      </g>
+    </svg>
     <h1 class="giant">WELCOME TO<br>VOIDFIRE</h1>
     <p class="subtitle">A board game of exploration, strategy, and endless fun.</p>
     <button class="cta-btn">Explore Now</button>
@@ -47,16 +61,16 @@
       <p class="section-desc">The story and world of VoidFire</p>
       <div class="cards-grid">
         <div class="card">
-          <h3>THE WAR</h3>
-          <p>???</p>
+          <h3>DA WAR</h3>
+          <p>Da war was an epic conflict between the forces of light and darkness.</p>
         </div>
         <div class="card">
           <h3>GODS</h3>
-          <p>???</p>
+          <p>The gods of VoidFire are powerful beings who shape the fate of the world.</p>
         </div>
         <div class="card">
           <h3>SPECIES</h3>
-          <p>???</p>
+          <p>Humans, Elves, Dwarves,goblins,orks,Mutants,Legion of the beasts,the legion of the fallen,the hangry hippo tribes,the shadow realm dwellers,the angry angels tribe of googa'la'booga,angka,</p>
         </div>
       </div>
     </div>
@@ -117,6 +131,8 @@
         <div class="rule-box">
           <h3>How to Win</h3>
           <p></p>
+        </div>
+        <div class="rule-box">
           <h4>EXAMPLE DATA SHEET</h4>
           <p>???</p>
         </div>
@@ -319,68 +335,13 @@
           
   </section>
 
-  <!-- MINI GAMES SECTION -->
-  <section id="minigames" class="section">
-    <div class="container">
-      <h2 class="section-title">FUN TIME MINI GAMES</h2>
-      <p class="section-desc">Quick games to play while you wait</p>
-      <div class="minigames-grid">
-        <div class="minigame">
-          <h3>🎲 Roll the Void</h3>
-          <p>Pick a number, then roll. A correct prediction earns a point.</p>
-          <div class="number-picker" aria-label="Choose a dice number">
-            <button type="button" data-guess="1">1</button><button type="button" data-guess="2">2</button><button type="button" data-guess="3">3</button><button type="button" data-guess="4">4</button><button type="button" data-guess="5">5</button><button type="button" data-guess="6">6</button>
-          </div>
-          <button class="btn" id="roll-button" type="button">Roll the dice</button>
-          <p class="game-status" id="roll-status" aria-live="polite">Choose a number to begin.</p>
-        </div>
-        <div class="minigame">
-          <h3>🎯 Signal Match</h3>
-          <p>Find all three matching pairs.</p>
-          <div class="memory-grid" id="memory-grid" aria-label="Signal Match cards"></div>
-          <button class="btn" id="memory-reset" type="button">New game</button>
-          <p class="game-status" id="memory-status" aria-live="polite">Find the matching signals.</p>
-        </div>
-        <div class="minigame">
-          <h3>⚡ Speed Challenge</h3>
-          <p>Choose the pattern that matches the signal before time runs out.</p>
-          <div class="speed-target" id="speed-target">Press start</div>
-          <div class="speed-options" id="speed-options"></div>
-          <button class="btn" id="speed-start" type="button">Start 15-second challenge</button>
-          <p class="game-status" id="speed-status" aria-live="polite">Score: 0 · Time: 15</p>
-        </div>
-        <div class="minigame">
-          <h3>🟣 Void Breakout</h3>
-          <p>Break the purple target barrier. Catch power-ups to survive longer.</p>
-          <canvas class="arcade-canvas" id="breakout-canvas" width="320" height="220" aria-label="Void Breakout game"></canvas>
-          <button class="btn" id="breakout-start" type="button">Start Void Breakout</button>
-          <p class="game-status" id="breakout-status" aria-live="polite">Move the paddle with your mouse or finger.</p>
-        </div>
-        <div class="minigame">
-          <h3>💣 Void Mines</h3>
-          <p>Clear the field without waking the void mines. Right-click or Shift-click to flag.</p>
-          <div class="mines-board" id="mines-board" aria-label="Void Mines board"></div>
-          <button class="btn" id="mines-reset" type="button">New minefield</button>
-          <p class="game-status" id="mines-status" aria-live="polite">10 void mines are hidden.</p>
-        </div>
-        <div class="minigame">
-          <h3>🏃 Void Runner</h3>
-          <p>Race through the void tunnel. Move between lanes and jump broken panels.</p>
-          <canvas class="arcade-canvas" id="runner-canvas" width="640" height="360" aria-label="Void Runner game"></canvas>
-          <div class="runner-hud" aria-live="polite"><span id="runner-distance">DIST 0</span><span id="runner-zone">ZONE 1</span><span id="runner-lives">LIVES ♥♥♥</span><span id="runner-shield">SHIELD OFF</span></div>
-          <button class="btn" id="runner-start" type="button">Start Void Runner</button>
-          <p class="game-status" id="runner-status" aria-live="polite">Use A/D or ←/→ to move, and Space or ↑ to jump.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- FOOTER -->
   <footer class="footer">
     <p>&copy; 2026 Void Fire Board Game. All rights reserved.</p>
   </footer>
 
   <script>
+    if (document.querySelector('#roll-button')) {
     // Roll the Void
     let rollGuess = null;
     let rollScore = 0;
@@ -885,14 +846,14 @@
     runner = { wall: 0, displayWall: 0, jumpHeight: 0, gaps: [], cores: [], shield: false, score: 0, lives: 3, zone: 1 };
     updateRunnerHud();
     if (runnerGl) drawRunner();
+    }
 
     const sectionSounds = [
       { section: document.querySelector('#home'), sound: document.querySelector('#home-sound') },
       { section: document.querySelector('#lore'), sound: document.querySelector('#lore-sound') },
       { section: document.querySelector('#rules'), sound: document.querySelector('#rules-sound') },
       { section: document.querySelector('#pricing'), sound: document.querySelector('#pricing-sound') },
-      { section: document.querySelector('#merchandise'), sound: document.querySelector('#swag-sound') },
-      { section: document.querySelector('#minigames'), sound: document.querySelector('#minigames-sound') }
+      { section: document.querySelector('#merchandise'), sound: document.querySelector('#swag-sound') }
     ];
 
     let playingSound = null;
