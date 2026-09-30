@@ -27,6 +27,7 @@
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="#supplies">Supplies</a></li>
         <li><a href="#merchandise">Swag</a></li>
+        <li><a href="#nightwatch-casino">Nightwatch Casino</a></li>
       </ul>
     </div>
   </nav>
@@ -135,38 +136,6 @@
         <div class="rule-box">
           <h4>EXAMPLE DATA SHEET</h4>
           <p>???</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TETRIS SECTION -->
-  <section id="tetris" class="section tetris-section">
-    <div class="container">
-      <h2 class="section-title">VOID TETRIS</h2>
-      <p class="section-desc">A quick burst of neon stacking inside the void.</p>
-      <div class="tetris-shell">
-        <div class="tetris-board-wrap">
-          <canvas id="tetris-canvas" width="300" height="600" aria-label="Voidfire Tetris board"></canvas>
-        </div>
-        <div class="tetris-panel">
-          <div class="tetris-scoreboard">
-            <div class="tetris-stat"><span>Score</span><span id="tetris-score">0</span></div>
-            <div class="tetris-stat"><span>Lines</span><span id="tetris-lines">0</span></div>
-            <div class="tetris-stat"><span>Level</span><span id="tetris-level">1</span></div>
-          </div>
-          <div class="tetris-controls">
-            <button id="tetris-start" class="tetris-btn" type="button">Start</button>
-            <button id="tetris-pause" class="tetris-btn" type="button">Pause</button>
-            <button id="tetris-reset" class="tetris-btn" type="button">Reset</button>
-          </div>
-          <div id="tetris-status" class="tetris-status">Press Start to begin the void stack.</div>
-          <ul class="tetris-legend">
-            <li><strong>← / →</strong> Move</li>
-            <li><strong>↑</strong> Rotate</li>
-            <li><strong>↓</strong> Soft drop</li>
-            <li><strong>Space</strong> Hard drop</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -366,6 +335,124 @@
           
           
   </section>
+
+  <!-- NIGHTWATCH CASINO -->
+  <div id="nightwatch-casino" class="nightwatch-casino">
+    <header class="casino-heading">
+      <p class="eyebrow">VOIDFIRE ENTERTAINMENT</p>
+      <h2 class="section-title">NIGHTWATCH CASINO</h2>
+      <p class="section-desc">Step inside for a game of skill or a lucky spin.</p>
+    </header>
+    <section id="tetris" class="section tetris-section">
+      <div class="container">
+        <h2 class="section-title">VOID TETRIS</h2>
+        <p class="section-desc">A quick burst of neon stacking inside the void.</p>
+        <div class="tetris-shell">
+          <div class="tetris-board-wrap">
+            <canvas id="tetris-canvas" width="300" height="600" aria-label="Voidfire Tetris board"></canvas>
+          </div>
+          <div class="tetris-panel">
+            <div class="tetris-scoreboard">
+              <div class="tetris-stat"><span>Score</span><span id="tetris-score">0</span></div>
+              <div class="tetris-stat"><span>Lines</span><span id="tetris-lines">0</span></div>
+              <div class="tetris-stat"><span>Level</span><span id="tetris-level">1</span></div>
+            </div>
+            <div class="tetris-controls">
+              <button id="tetris-start" class="tetris-btn" type="button">Start</button>
+              <button id="tetris-pause" class="tetris-btn" type="button">Pause</button>
+              <button id="tetris-reset" class="tetris-btn" type="button">Reset</button>
+            </div>
+            <div id="tetris-status" class="tetris-status">Press Start to begin the void stack.</div>
+            <ul class="tetris-legend">
+              <li><strong>← / →</strong> Move</li>
+              <li><strong>↑</strong> Rotate</li>
+              <li><strong>↓</strong> Soft drop</li>
+              <li><strong>Space</strong> Hard drop</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="void-poker" class="section poker-section">
+      <div class="container">
+        <p class="eyebrow">PLAY FOR FUN · NO REAL MONEY</p>
+        <h2 class="section-title">VOID POKER</h2>
+        <p class="section-desc">Texas Hold’em against three AI bots. Sit down with a 2,000 VC table stack; your bank pays the buy-in, even if that takes it below zero.</p>
+        <div class="poker-table">
+          <div class="poker-opponents" id="poker-opponents" aria-live="polite"></div>
+          <div class="poker-center">
+            <div class="poker-pot">POT <strong id="poker-pot">0</strong> <span>VC</span></div>
+            <div id="poker-community" class="poker-cards poker-community" aria-label="Community cards"></div>
+            <div id="poker-message" class="poker-message" aria-live="polite">Start a hand to join the table.</div>
+          </div>
+          <div class="poker-player">
+            <div class="poker-player-info"><strong>You · table stack</strong><span id="poker-player-cash">0 VC</span></div>
+            <div id="poker-player-cards" class="poker-cards" aria-label="Your cards"></div>
+          </div>
+        </div>
+        <div class="void-bank poker-bank"><span>Your shared Void Cash bank</span><strong id="poker-bank-total">1,000 VC</strong></div>
+        <div class="poker-actions">
+          <button id="poker-new-hand" class="tetris-btn" type="button">Sit / Start Game</button>
+          <button id="poker-leave" class="tetris-btn" type="button" disabled>Leave Table & Cash Out</button>
+          <button id="poker-fold" class="tetris-btn" type="button" disabled>Fold</button>
+          <button id="poker-call" class="tetris-btn" type="button" disabled>Check</button>
+          <button id="poker-raise" class="tetris-btn" type="button" disabled>Raise +40 VC</button>
+        </div>
+        <p class="poker-footnote">Your bank is charged 2,000 VC when you sit down. Leave between hands to add your remaining table stack back to your bank. Void Cash is fictional; no real money is used.</p>
+      </div>
+    </section>
+
+    <section id="void-slots" class="section slots-section">
+      <div class="container">
+        <p class="eyebrow">FREE PULLS · PLAY CREDITS ONLY</p>
+        <h2 class="section-title">VOID SLOTS</h2>
+        <p class="section-desc">Spin for free. Every result changes your shared Void Cash bank.</p>
+        <div class="slots-machine">
+          <div class="slots-reels" aria-label="Slot machine result">
+            <span id="slot-reel-one" class="slot-reel">✦</span>
+            <span id="slot-reel-two" class="slot-reel">✦</span>
+            <span id="slot-reel-three" class="slot-reel">✦</span>
+          </div>
+          <button id="slots-spin" class="tetris-btn slots-spin" type="button">Spin — Free</button>
+          <p id="slots-result" class="slots-result" aria-live="polite">Ready when you are. Pulls are free.</p>
+        </div>
+        <div class="void-bank" aria-live="polite"><span>Your total Void Cash bank</span><strong id="void-cash-total">1,000 VC</strong></div>
+        <section id="debt-challenge" class="debt-challenge" hidden aria-labelledby="debt-title">
+          <p class="eyebrow">OVERDRAFT PENALTY</p>
+          <h3 id="debt-title">Math Challenge</h3>
+          <p id="debt-instructions" class="debt-instructions"></p>
+          <p id="debt-progress" class="debt-progress"></p>
+          <form id="debt-answer-form" class="debt-answer-form">
+            <label id="debt-question" for="debt-answer"></label>
+            <div class="debt-answer-controls">
+              <input id="debt-answer" name="answer" type="number" step="1" inputmode="numeric" autocomplete="off" required>
+              <button class="tetris-btn" type="submit">Answer</button>
+            </div>
+          </form>
+          <p id="debt-feedback" class="debt-feedback" aria-live="polite"></p>
+        </section>
+        <p class="slots-odds-note">The listed odds add up to about 99.98%; the tiny remaining fraction is a blank, no-payout result. All spins are free. Amounts can take your bank below zero.</p>
+        <div class="slots-odds" id="slots-odds">
+          <div class="slot-odds-row"><strong>◆ ◆ ◆</strong><span>+1,000,000 VC</span><small>1 in 12,500</small></div>
+          <div class="slot-odds-row"><strong>7 7 7</strong><span>+250,000 VC</span><small>1 in 2,500</small></div>
+          <div class="slot-odds-row"><strong>♠ ♠ ♠</strong><span>+60,000 VC</span><small>1 in 400</small></div>
+          <div class="slot-odds-row"><strong>☘ ☘ ☘</strong><span>+12,000 VC</span><small>1.2%</small></div>
+          <div class="slot-odds-row"><strong>⬡ ⬡ ⬡</strong><span>+4,000 VC</span><small>3.5%</small></div>
+          <div class="slot-odds-row"><strong>♥ ♥ ♥</strong><span>+1,500 VC</span><small>13%</small></div>
+          <div class="slot-odds-row slot-loss"><strong>☠ ☠ ☠</strong><span>−300,000 VC</span><small>1 in 1,667</small></div>
+          <div class="slot-odds-row slot-loss"><strong>◆ ◆ ?</strong><span>−100,000 VC</span><small>1 in 238</small></div>
+          <div class="slot-odds-row slot-loss"><strong>7 7 ?</strong><span>−15,000 VC</span><small>1.5%</small></div>
+          <div class="slot-odds-row slot-loss"><strong>♠ ♠ ?</strong><span>−4,000 VC</span><small>6.0%</small></div>
+          <div class="slot-odds-row slot-loss"><strong>☘ ☘ ?</strong><span>−1,500 VC</span><small>13%</small></div>
+          <div class="slot-odds-row slot-loss"><strong>⬡ ⬡ ?</strong><span>−700 VC</span><small>15%</small></div>
+          <div class="slot-odds-row slot-loss"><strong>♥ ♥ ?</strong><span>−300 VC</span><small>13%</small></div>
+          <div class="slot-odds-row"><strong>Any no match</strong><span>0 VC</span><small>33%</small></div>
+          <div class="slot-odds-row"><strong>Blank remainder</strong><span>0 VC</span><small>about 0.02%</small></div>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <!-- FOOTER -->
   <footer class="footer">
@@ -677,9 +764,537 @@
       }
     });
 
-    resetTetris();
+    currentPiece = null;
     statusEl.textContent = 'Press Start to begin the void stack.';
+    drawBoard();
     window.requestAnimationFrame(gameLoop);
+
+    // One shared fictional bank for poker and the free slot machine.
+    const voidCashStorageKey = 'voidfire-cash-bank';
+    const debtProgressStorageKey = 'voidfire-debt-questions-completed';
+    let voidCashBank = 1000;
+    let debtQuestionsCompleted = 0;
+    let debtQuestion = null;
+    let debtPenaltyActive = false;
+    try {
+      const savedBankValue = window.localStorage.getItem(voidCashStorageKey);
+      if (savedBankValue !== null) {
+        const savedBank = Number(savedBankValue);
+        if (Number.isFinite(savedBank)) voidCashBank = savedBank;
+      }
+      const savedProgress = Number(window.localStorage.getItem(debtProgressStorageKey));
+      if (Number.isFinite(savedProgress) && savedProgress > 0) debtQuestionsCompleted = Math.trunc(savedProgress);
+    } catch (error) {
+      // Local-file browser privacy settings may disable storage; the games still work for this visit.
+    }
+    const voidCashTotal = document.getElementById('void-cash-total');
+    const pokerBankTotal = document.getElementById('poker-bank-total');
+    const debtChallenge = document.getElementById('debt-challenge');
+    const debtInstructions = document.getElementById('debt-instructions');
+    const debtProgress = document.getElementById('debt-progress');
+    const debtQuestionLabel = document.getElementById('debt-question');
+    const debtAnswerInput = document.getElementById('debt-answer');
+    const debtFeedback = document.getElementById('debt-feedback');
+
+    function requiredDebtQuestions() {
+      return voidCashBank < 0 ? Math.ceil(Math.abs(Math.trunc(voidCashBank)) / 100) : 0;
+    }
+
+    function makeDebtQuestion() {
+      const operations = ['+', '−', '×', '÷'];
+      const operation = operations[Math.floor(Math.random() * operations.length)];
+      let first = Math.floor(Math.random() * 30) + 2;
+      let second = Math.floor(Math.random() * 20) + 2;
+      let answer;
+      if (operation === '+') answer = first + second;
+      if (operation === '−') {
+        if (second > first) [first, second] = [second, first];
+        answer = first - second;
+      }
+      if (operation === '×') {
+        first = Math.floor(Math.random() * 12) + 2;
+        second = Math.floor(Math.random() * 12) + 2;
+        answer = first * second;
+      }
+      if (operation === '÷') {
+        answer = Math.floor(Math.random() * 12) + 2;
+        second = Math.floor(Math.random() * 12) + 2;
+        first = answer * second;
+      }
+      return { text: `${first} ${operation} ${second} = ?`, answer };
+    }
+
+    function syncDebtChallenge() {
+      const required = requiredDebtQuestions();
+      if (!required) {
+        debtQuestionsCompleted = 0;
+        debtQuestion = null;
+      }
+      debtPenaltyActive = required > debtQuestionsCompleted;
+      debtChallenge.hidden = !required;
+
+      if (required) {
+        debtInstructions.textContent = `Your bank is ${Math.abs(Math.trunc(voidCashBank)).toLocaleString()} VC below zero. Complete ${required} questions total — one for each 100 VC of debt — to unlock new spins and poker games.`;
+        debtProgress.textContent = `Correct answers: ${Math.min(debtQuestionsCompleted, required)} / ${required}`;
+        document.getElementById('debt-answer-form').hidden = !debtPenaltyActive;
+        if (debtPenaltyActive) {
+          if (!debtQuestion) debtQuestion = makeDebtQuestion();
+          debtQuestionLabel.textContent = debtQuestion.text;
+        } else {
+          debtQuestionLabel.textContent = '';
+          debtFeedback.textContent = 'Challenge complete. New spins and poker games are unlocked.';
+        }
+      } else {
+        document.getElementById('debt-answer-form').hidden = false;
+        debtFeedback.textContent = '';
+      }
+
+      const slotsButton = document.getElementById('slots-spin');
+      if (slotsButton) slotsButton.disabled = debtPenaltyActive;
+      const pokerStartButton = document.getElementById('poker-new-hand');
+      if (pokerStartButton && !pokerSessionActive) pokerStartButton.disabled = debtPenaltyActive;
+      try {
+        window.localStorage.setItem(debtProgressStorageKey, String(debtQuestionsCompleted));
+      } catch (error) {
+        // Continue without persistence if browser storage is unavailable.
+      }
+    }
+
+    document.getElementById('debt-answer-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!debtPenaltyActive || !debtQuestion) return;
+      const answer = Number(debtAnswerInput.value);
+      if (answer !== debtQuestion.answer) {
+        debtFeedback.textContent = 'Not quite — try another answer.';
+        debtAnswerInput.select();
+        return;
+      }
+
+      debtQuestionsCompleted += 1;
+      debtQuestion = null;
+      debtAnswerInput.value = '';
+      debtFeedback.textContent = debtQuestionsCompleted >= requiredDebtQuestions()
+        ? 'Challenge complete. New spins and poker games are unlocked.'
+        : 'Correct! Here comes the next question.';
+      syncDebtChallenge();
+      if (typeof renderPoker === 'function') renderPoker();
+      if (debtPenaltyActive) debtAnswerInput.focus();
+    });
+
+    function renderVoidCashBank() {
+      const formatted = `${Math.trunc(voidCashBank).toLocaleString()} VC`;
+      voidCashTotal.textContent = formatted;
+      pokerBankTotal.textContent = formatted;
+      syncDebtChallenge();
+      try {
+        window.localStorage.setItem(voidCashStorageKey, String(Math.trunc(voidCashBank)));
+      } catch (error) {
+        // Keep the current-session balance if storage is unavailable.
+      }
+    }
+
+    // Void Poker — play-only Texas Hold'em against three simple AI opponents.
+    const pokerNames = ['Nova Bot', 'Rook Bot', 'Echo Bot'];
+    const pokerPlayers = [{ name: 'You', cash: 0, human: true, folded: false, bet: 0, cards: [] },
+      ...pokerNames.map((name) => ({ name, cash: 0, human: false, folded: false, bet: 0, cards: [] }))];
+    const pokerOpponents = document.getElementById('poker-opponents');
+    const pokerCommunity = document.getElementById('poker-community');
+    const pokerPlayerCards = document.getElementById('poker-player-cards');
+    const pokerPot = document.getElementById('poker-pot');
+    const pokerMessage = document.getElementById('poker-message');
+    const pokerPlayerCash = document.getElementById('poker-player-cash');
+    const pokerCallButton = document.getElementById('poker-call');
+    const pokerRaiseButton = document.getElementById('poker-raise');
+    let pokerDeck = [];
+    let pokerBoard = [];
+    let pokerPotValue = 0;
+    let pokerCurrentBet = 0;
+    let pokerHandActive = false;
+    let pokerSessionActive = false;
+    let pokerRound = 'pre-flop';
+
+    const pokerSuits = ['♠', '♥', '♦', '♣'];
+    const pokerRanks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+    const pokerRankLabels = { 11: 'J', 12: 'Q', 13: 'K', 14: 'A' };
+
+    function makePokerDeck() {
+      pokerDeck = pokerSuits.flatMap((suit) => pokerRanks.map((rank) => ({ suit, rank })));
+      for (let index = pokerDeck.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [pokerDeck[index], pokerDeck[swapIndex]] = [pokerDeck[swapIndex], pokerDeck[index]];
+      }
+    }
+
+    function drawPokerCard() {
+      return pokerDeck.pop();
+    }
+
+    function cardLabel(card) {
+      return `${pokerRankLabels[card.rank] || card.rank}${card.suit}`;
+    }
+
+    function makeCardElement(card, hidden = false) {
+      const element = document.createElement('span');
+      element.className = `poker-card${hidden ? ' poker-card-hidden' : ''}${card && ['♥', '♦'].includes(card.suit) ? ' poker-card-red' : ''}`;
+      element.textContent = hidden ? '✦' : cardLabel(card);
+      element.setAttribute('aria-label', hidden ? 'Face-down card' : cardLabel(card));
+      return element;
+    }
+
+    function renderPoker() {
+      pokerOpponents.replaceChildren();
+      pokerPlayers.slice(1).forEach((player) => {
+        const seat = document.createElement('div');
+        seat.className = `poker-seat${player.folded ? ' poker-folded' : ''}`;
+        const heading = document.createElement('div');
+        heading.className = 'poker-seat-heading';
+        heading.innerHTML = `<strong>${player.name}</strong><span>${player.cash.toLocaleString()} VC</span>`;
+        const cards = document.createElement('div');
+        cards.className = 'poker-cards poker-bot-cards';
+        player.cards.forEach((card) => cards.append(makeCardElement(card, pokerHandActive && !player.folded)));
+        if (!player.cards.length) {
+          cards.append(makeCardElement(null, true), makeCardElement(null, true));
+        }
+        const note = document.createElement('small');
+        note.textContent = player.folded ? 'FOLDED' : player.bet ? `BET ${player.bet} VC` : 'AI OPPONENT';
+        seat.append(heading, cards, note);
+        pokerOpponents.append(seat);
+      });
+
+      pokerCommunity.replaceChildren();
+      for (let index = 0; index < 5; index += 1) {
+        pokerCommunity.append(pokerBoard[index] ? makeCardElement(pokerBoard[index]) : makeCardElement(null, true));
+      }
+      pokerPlayerCards.replaceChildren();
+      pokerPlayers[0].cards.forEach((card) => pokerPlayerCards.append(makeCardElement(card)));
+      if (!pokerPlayers[0].cards.length) pokerPlayerCards.append(makeCardElement(null, true), makeCardElement(null, true));
+      pokerPot.textContent = pokerPotValue.toLocaleString();
+      pokerPlayerCash.textContent = `${pokerPlayers[0].cash.toLocaleString()} VC`;
+      document.getElementById('poker-new-hand').textContent = pokerSessionActive ? 'Deal Next Hand' : 'Sit Down · 2,000 VC';
+      document.getElementById('poker-new-hand').disabled = pokerHandActive || debtPenaltyActive || (pokerSessionActive && pokerPlayers[0].cash <= 0);
+      document.getElementById('poker-leave').disabled = !pokerSessionActive || pokerHandActive;
+      pokerCallButton.textContent = pokerCurrentBet > pokerPlayers[0].bet ? `Call ${pokerCurrentBet - pokerPlayers[0].bet} VC` : 'Check';
+      const canAct = pokerHandActive && !pokerPlayers[0].folded;
+      document.getElementById('poker-fold').disabled = !canAct;
+      pokerCallButton.disabled = !canAct;
+      pokerRaiseButton.disabled = !canAct || pokerPlayers[0].cash <= pokerCurrentBet - pokerPlayers[0].bet;
+    }
+
+    function bestFive(cards) {
+      let best = null;
+      function choose(start, selected) {
+        if (selected.length === 5) {
+          const result = rankFive(selected);
+          if (!best || comparePokerRanks(result, best) > 0) best = result;
+          return;
+        }
+        for (let index = start; index <= cards.length - (5 - selected.length); index += 1) {
+          choose(index + 1, [...selected, cards[index]]);
+        }
+      }
+      choose(0, []);
+      return best || [0, 0];
+    }
+
+    function rankFive(cards) {
+      const values = cards.map((card) => card.rank).sort((a, b) => b - a);
+      const counts = new Map();
+      values.forEach((value) => counts.set(value, (counts.get(value) || 0) + 1));
+      const groups = [...counts].sort((a, b) => b[1] - a[1] || b[0] - a[0]);
+      const flush = cards.every((card) => card.suit === cards[0].suit);
+      const unique = [...new Set(values)];
+      if (unique[0] === 14) unique.push(1);
+      let straightHigh = 0;
+      for (let index = 0; index <= unique.length - 5; index += 1) {
+        if (unique[index] - unique[index + 4] === 4) { straightHigh = unique[index]; break; }
+      }
+      if (flush && straightHigh) return [8, straightHigh];
+      if (groups[0][1] === 4) return [7, groups[0][0], groups[1][0]];
+      if (groups[0][1] === 3 && groups[1][1] === 2) return [6, groups[0][0], groups[1][0]];
+      if (flush) return [5, ...values];
+      if (straightHigh) return [4, straightHigh];
+      if (groups[0][1] === 3) return [3, groups[0][0], ...groups.slice(1).map((group) => group[0]).sort((a, b) => b - a)];
+      if (groups[0][1] === 2 && groups[1][1] === 2) return [2, groups[0][0], groups[1][0], groups[2][0]];
+      if (groups[0][1] === 2) return [1, groups[0][0], ...groups.slice(1).map((group) => group[0]).sort((a, b) => b - a)];
+      return [0, ...values];
+    }
+
+    function comparePokerRanks(first, second) {
+      for (let index = 0; index < Math.max(first.length, second.length); index += 1) {
+        const difference = (first[index] || 0) - (second[index] || 0);
+        if (difference) return difference;
+      }
+      return 0;
+    }
+
+    function pokerHandName(rank) {
+      return ['high card', 'one pair', 'two pair', 'three of a kind', 'straight', 'flush', 'full house', 'four of a kind', 'straight flush'][rank[0]];
+    }
+
+    function putPokerChips(player, amount) {
+      const chips = Math.max(0, Math.min(amount, player.cash));
+      player.cash -= chips;
+      player.bet += chips;
+      pokerPotValue += chips;
+      return chips;
+    }
+
+    function activePokerPlayers() {
+      return pokerPlayers.filter((player) => !player.folded && player.cards.length > 0);
+    }
+
+    function awardPokerPot(winners, reason) {
+      if (!winners.length) return;
+      const share = Math.floor(pokerPotValue / winners.length);
+      let remainder = pokerPotValue - share * winners.length;
+      winners.forEach((player) => {
+        const winnings = share + (remainder > 0 ? 1 : 0);
+        remainder -= remainder > 0 ? 1 : 0;
+        player.cash += winnings;
+      });
+      pokerMessage.textContent = `${reason} ${winners.map((player) => player.name).join(' & ')} win ${pokerPotValue.toLocaleString()} VC.`;
+      pokerPotValue = 0;
+      pokerHandActive = false;
+      pokerPlayers.forEach((player) => { player.bet = 0; });
+      renderPoker();
+      const botsBusted = pokerPlayers.slice(1).every((bot) => bot.cash <= 0);
+      if (botsBusted || pokerPlayers[0].cash <= 0) {
+        window.setTimeout(() => cashOutPoker(botsBusted ? 'All the bots are out of chips.' : 'Your table stack is empty.'), 900);
+      }
+    }
+
+    function resolvePokerShowdown() {
+      const contenders = activePokerPlayers();
+      if (contenders.length === 1) {
+        awardPokerPot(contenders, 'Everyone else folded.');
+        return;
+      }
+      while (pokerBoard.length < 5) pokerBoard.push(drawPokerCard());
+      const ranked = contenders.map((player) => ({ player, rank: bestFive([...player.cards, ...pokerBoard]) }));
+      ranked.sort((a, b) => comparePokerRanks(b.rank, a.rank));
+      const winningRank = ranked[0].rank;
+      const winners = ranked.filter((entry) => comparePokerRanks(entry.rank, winningRank) === 0).map((entry) => entry.player);
+      const labels = winners.map((player) => `${player.name} (${pokerHandName(winningRank)})`).join(' & ');
+      pokerHandActive = false;
+      awardPokerPot(winners, `Showdown: ${labels}.`);
+    }
+
+    function botStrength(player) {
+      if (pokerBoard.length >= 3) {
+        const rank = bestFive([...player.cards, ...pokerBoard]);
+        return Math.min(1, rank[0] / 8 + (rank[1] || 0) / 100);
+      }
+      const [first, second] = player.cards.map((card) => card.rank).sort((a, b) => b - a);
+      return (first === second ? 0.58 + first / 100 : 0.28 + first / 40 + second / 150);
+    }
+
+    function runPokerBots() {
+      for (const bot of pokerPlayers.slice(1)) {
+        if (bot.folded || !bot.cards.length || bot.cash <= 0) continue;
+        const callAmount = Math.max(0, pokerCurrentBet - bot.bet);
+        const strength = botStrength(bot);
+        if (callAmount > bot.cash || (callAmount > 0 && strength < 0.34 + Math.random() * 0.22)) {
+          bot.folded = true;
+          continue;
+        }
+        if (callAmount > 0) putPokerChips(bot, callAmount);
+      }
+      const botsStillIn = pokerPlayers.slice(1).some((bot) => bot.cards.length && !bot.folded);
+      if (!botsStillIn) {
+        const lastBot = pokerPlayers.slice(1).filter((bot) => bot.cards.length).sort((a, b) => b.cash - a.cash)[0];
+        if (lastBot) lastBot.folded = false;
+      }
+    }
+
+    function finishPokerStreet() {
+      const contenders = activePokerPlayers();
+      if (contenders.length <= 1) {
+        resolvePokerShowdown();
+        return;
+      }
+      if (pokerRound === 'river') {
+        resolvePokerShowdown();
+        return;
+      }
+      if (pokerRound === 'pre-flop') {
+        pokerBoard.push(drawPokerCard(), drawPokerCard(), drawPokerCard());
+        pokerRound = 'flop';
+      } else if (pokerRound === 'flop') {
+        pokerBoard.push(drawPokerCard());
+        pokerRound = 'turn';
+      } else if (pokerRound === 'turn') {
+        pokerBoard.push(drawPokerCard());
+        pokerRound = 'river';
+      }
+      pokerPlayers.forEach((player) => { player.bet = 0; });
+      pokerCurrentBet = 0;
+      pokerMessage.textContent = `${pokerRound.toUpperCase()}: your action.`;
+      renderPoker();
+    }
+
+    function pokerPlayerAction(action) {
+      if (!pokerHandActive) return;
+      const player = pokerPlayers[0];
+      const callAmount = Math.max(0, pokerCurrentBet - player.bet);
+      if (action === 'fold') {
+        player.folded = true;
+      } else if (action === 'raise') {
+        const paid = putPokerChips(player, callAmount + 40);
+        pokerCurrentBet = player.bet;
+        if (paid <= callAmount) pokerMessage.textContent = 'You called all-in.';
+      } else if (callAmount > 0) {
+        putPokerChips(player, callAmount);
+      }
+
+      runPokerBots();
+      if (activePokerPlayers().length <= 1 || player.folded) {
+        resolvePokerShowdown();
+        return;
+      }
+      finishPokerStreet();
+    }
+
+    function startPokerHand() {
+      if (debtPenaltyActive && !pokerSessionActive) {
+        pokerMessage.textContent = 'Complete your Void Cash math challenge before starting poker.';
+        return;
+      }
+      if (!pokerSessionActive) {
+        voidCashBank -= 2000;
+        pokerPlayers[0].cash = 2000;
+        pokerPlayers.slice(1).forEach((bot) => { bot.cash = 2000; });
+        pokerSessionActive = true;
+        renderVoidCashBank();
+      } else if (pokerPlayers[0].cash <= 0) {
+        pokerMessage.textContent = 'Your table stack is empty. Cash out or reset your bank.';
+        return;
+      }
+      pokerPlayers.forEach((player) => {
+        player.folded = false;
+        player.bet = 0;
+        player.cards = [];
+      });
+      makePokerDeck();
+      pokerBoard = [];
+      pokerPotValue = 0;
+      pokerCurrentBet = 0;
+      pokerRound = 'pre-flop';
+      pokerPlayers.forEach((player) => {
+        if (player.cash > 0) player.cards = [drawPokerCard(), drawPokerCard()];
+      });
+      putPokerChips(pokerPlayers[0], 10);
+      const blind = putPokerChips(pokerPlayers[1], 20);
+      pokerCurrentBet = blind;
+      pokerHandActive = true;
+      pokerMessage.textContent = 'Pre-flop: call, raise, or fold.';
+      renderPoker();
+    }
+
+    document.getElementById('poker-new-hand').addEventListener('click', startPokerHand);
+    function cashOutPoker(reason = 'You left the table.') {
+      if (!pokerSessionActive || pokerHandActive) return;
+      const tableStack = pokerPlayers[0].cash;
+      voidCashBank += tableStack;
+      pokerPlayers.forEach((player) => {
+        player.cash = 0;
+        player.cards = [];
+        player.bet = 0;
+        player.folded = false;
+      });
+      pokerBoard = [];
+      pokerPotValue = 0;
+      pokerCurrentBet = 0;
+      pokerSessionActive = false;
+      pokerMessage.textContent = `${reason} ${tableStack.toLocaleString()} VC returned to your bank.`;
+      renderVoidCashBank();
+      renderPoker();
+    }
+    document.getElementById('poker-leave').addEventListener('click', () => cashOutPoker());
+    document.getElementById('poker-fold').addEventListener('click', () => pokerPlayerAction('fold'));
+    pokerCallButton.addEventListener('click', () => pokerPlayerAction('call'));
+    pokerRaiseButton.addEventListener('click', () => pokerPlayerAction('raise'));
+    renderVoidCashBank();
+    renderPoker();
+
+    // Void Slots — a free pull, with outcomes weighted to the supplied odds.
+    const slotReels = [
+      document.getElementById('slot-reel-one'),
+      document.getElementById('slot-reel-two'),
+      document.getElementById('slot-reel-three'),
+    ];
+    const slotSymbols = ['◆', '7', '♠', '☘', '⬡', '♥', '☠'];
+    const slotOutcomes = [
+      { pattern: ['◆', '◆', '◆'], payout: 1000000, chance: 1 / 12500, name: 'Void jackpot' },
+      { pattern: ['7', '7', '7'], payout: 250000, chance: 1 / 2500, name: 'Triple sevens' },
+      { pattern: ['♠', '♠', '♠'], payout: 60000, chance: 1 / 400, name: 'Triple spades' },
+      { pattern: ['☘', '☘', '☘'], payout: 12000, chance: 0.012, name: 'Triple clovers' },
+      { pattern: ['⬡', '⬡', '⬡'], payout: 4000, chance: 0.035, name: 'Triple hexes' },
+      { pattern: ['♥', '♥', '♥'], payout: 1500, chance: 0.13, name: 'Triple hearts' },
+      { pattern: ['☠', '☠', '☠'], payout: -300000, chance: 1 / 1667, name: 'Skull strike' },
+      { pair: '◆', payout: -100000, chance: 1 / 238, name: 'Diamond pair' },
+      { pair: '7', payout: -15000, chance: 0.015, name: 'Seven pair' },
+      { pair: '♠', payout: -4000, chance: 0.06, name: 'Spade pair' },
+      { pair: '☘', payout: -1500, chance: 0.13, name: 'Clover pair' },
+      { pair: '⬡', payout: -700, chance: 0.15, name: 'Hex pair' },
+      { pair: '♥', payout: -300, chance: 0.13, name: 'Heart pair' },
+      { pattern: null, payout: 0, chance: 0.33, name: 'No match' },
+    ];
+    const listedSlotChance = slotOutcomes.reduce((total, outcome) => total + outcome.chance, 0);
+    slotOutcomes.push({ pattern: null, payout: 0, chance: Math.max(0, 1 - listedSlotChance), name: 'Blank spin' });
+    const slotsSpinButton = document.getElementById('slots-spin');
+    const slotsResult = document.getElementById('slots-result');
+    let slotSpinTimer = null;
+
+    function makeSlotNoMatch() {
+      const symbols = [...slotSymbols].sort(() => Math.random() - 0.5).slice(0, 3);
+      return symbols;
+    }
+
+    function chooseSlotOutcome() {
+      const roll = Math.random();
+      let threshold = 0;
+      for (const outcome of slotOutcomes) {
+        threshold += outcome.chance;
+        if (roll < threshold) {
+          if (outcome.pattern) return { ...outcome, resultPattern: [...outcome.pattern] };
+          if (outcome.pair) {
+            const thirdOptions = slotSymbols.filter((symbol) => symbol !== outcome.pair);
+            return { ...outcome, resultPattern: [outcome.pair, outcome.pair, thirdOptions[Math.floor(Math.random() * thirdOptions.length)]] };
+          }
+          return { ...outcome, resultPattern: makeSlotNoMatch() };
+        }
+      }
+      return { pattern: null, payout: 0, name: 'Blank spin', resultPattern: makeSlotNoMatch() };
+    }
+
+    slotsSpinButton.addEventListener('click', () => {
+      if (debtPenaltyActive) {
+        slotsResult.textContent = 'Complete your Void Cash math challenge before spinning again.';
+        return;
+      }
+      if (slotSpinTimer) return;
+      const outcome = chooseSlotOutcome();
+      slotsSpinButton.disabled = true;
+      slotsResult.textContent = 'The reels are turning…';
+      document.querySelector('.slots-reels').classList.add('spinning');
+      slotSpinTimer = window.setInterval(() => {
+        slotReels.forEach((reel) => { reel.textContent = slotSymbols[Math.floor(Math.random() * slotSymbols.length)]; });
+      }, 75);
+
+      window.setTimeout(() => {
+        window.clearInterval(slotSpinTimer);
+        slotSpinTimer = null;
+        slotReels.forEach((reel, index) => { reel.textContent = outcome.resultPattern[index]; });
+        document.querySelector('.slots-reels').classList.remove('spinning');
+        voidCashBank += outcome.payout;
+        renderVoidCashBank();
+        const amount = outcome.payout > 0 ? `+${outcome.payout.toLocaleString()}` : outcome.payout.toLocaleString();
+        const outcomeText = outcome.payout === 0 ? `${outcome.name}: no change.` : `${outcome.name}: ${amount} VC.`;
+        slotsResult.textContent = `${outcomeText} Bank: ${Math.trunc(voidCashBank).toLocaleString()} VC.`;
+        slotsSpinButton.disabled = false;
+      }, 650);
+    });
+    renderVoidCashBank();
 
     if (document.querySelector('#roll-button')) {
     // Roll the Void
