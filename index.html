@@ -140,6 +140,38 @@
     </div>
   </section>
 
+  <!-- TETRIS SECTION -->
+  <section id="tetris" class="section tetris-section">
+    <div class="container">
+      <h2 class="section-title">VOID TETRIS</h2>
+      <p class="section-desc">A quick burst of neon stacking inside the void.</p>
+      <div class="tetris-shell">
+        <div class="tetris-board-wrap">
+          <canvas id="tetris-canvas" width="300" height="600" aria-label="Voidfire Tetris board"></canvas>
+        </div>
+        <div class="tetris-panel">
+          <div class="tetris-scoreboard">
+            <div class="tetris-stat"><span>Score</span><span id="tetris-score">0</span></div>
+            <div class="tetris-stat"><span>Lines</span><span id="tetris-lines">0</span></div>
+            <div class="tetris-stat"><span>Level</span><span id="tetris-level">1</span></div>
+          </div>
+          <div class="tetris-controls">
+            <button id="tetris-start" class="tetris-btn" type="button">Start</button>
+            <button id="tetris-pause" class="tetris-btn" type="button">Pause</button>
+            <button id="tetris-reset" class="tetris-btn" type="button">Reset</button>
+          </div>
+          <div id="tetris-status" class="tetris-status">Press Start to begin the void stack.</div>
+          <ul class="tetris-legend">
+            <li><strong>← / →</strong> Move</li>
+            <li><strong>↑</strong> Rotate</li>
+            <li><strong>↓</strong> Soft drop</li>
+            <li><strong>Space</strong> Hard drop</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- PRICING SECTION -->
   <section id="pricing" class="section">
     <div class="container">
@@ -341,6 +373,314 @@
   </footer>
 
   <script>
+    const tetrisCanvas = document.getElementById('tetris-canvas');
+    const tetrisContext = tetrisCanvas.getContext('2d');
+    const scoreEl = document.getElementById('tetris-score');
+    const linesEl = document.getElementById('tetris-lines');
+    const levelEl = document.getElementById('tetris-level');
+    const statusEl = document.getElementById('tetris-status');
+
+    const boardWidth = 10;
+    const boardHeight = 20;
+    const blockSize = 30;
+    const board = Array.from({ length: boardHeight }, () => Array(boardWidth).fill(null));
+
+    const tetrominoes = {
+      I: [[1, 1, 1, 1]],
+      O: [[1, 1], [1, 1]],
+      T: [[0, 1, 0], [1, 1, 1]],
+      S: [[0, 1, 1], [1, 1, 0]],
+      Z: [[1, 1, 0], [0, 1, 1]],
+      J: [[1, 0, 0], [1, 1, 1]],
+      L: [[0, 0, 1], [1, 1, 1]],
+    };
+
+    const colors = {
+      I: '#7dd3fc',
+      O: '#fbbf24',
+      T: '#c084fc',
+      S: '#34d399',
+      Z: '#fb7185',
+      J: '#60a5fa',
+      L: '#f9a8d4',
+    };
+
+    let currentPiece = null;
+    let score = 0;
+    let lines = 0;
+    let level = 1;
+    let dropped = 0;
+    let started = false;
+    let paused = false;
+    let gameOver = false;
+    let lastTime = 0;
+
+    function createEmptyBoard() {
+      return Array.from({ length: boardHeight }, () => Array(boardWidth).fill(null));
+    }
+
+    function cloneMatrix(matrix) {
+      return matrix.map((row) => [...row]);
+    }
+
+    function rotateMatrix(matrix) {
+      return matrix[0].map((_, columnIndex) => matrix.map((row) => row[columnIndex]).reverse());
+    }
+
+    function randomPiece() {
+      const types = Object.keys(tetrominoes);
+      const type = types[Math.floor(Math.random() * types.length)];
+      const matrix = cloneMatrix(tetrominoes[type]);
+      return {
+        type,
+        matrix,
+        x: Math.floor((boardWidth - matrix[0].length) / 2),
+        y: -1,
+        color: colors[type],
+      };
+    }
+
+    function resetTetris() {
+      for (let row = 0; row < boardHeight; row += 1) {
+        for (let column = 0; column < boardWidth; column += 1) {
+          board[row][column] = null;
+        }
+      }
+      score = 0;
+      lines = 0;
+      level = 1;
+      dropped = 0;
+      paused = false;
+      gameOver = false;
+      started = true;
+      currentPiece = randomPiece();
+      lastTime = 0;
+      updateScoreboard();
+      statusEl.textContent = 'Stack the blocks and hold the void line.';
+    }
+
+    function updateScoreboard() {
+      scoreEl.textContent = String(score);
+      linesEl.textContent = String(lines);
+      levelEl.textContent = String(level);
+    }
+
+    function collides(piece, offsetX = 0, offsetY = 0, matrix = piece.matrix) {
+      for (let y = 0; y < matrix.length; y += 1) {
+        for (let x = 0; x < matrix[y].length; x += 1) {
+          if (!matrix[y][x]) continue;
+          const boardX = piece.x + x + offsetX;
+          const boardY = piece.y + y + offsetY;
+
+          if (boardX < 0 || boardX >= boardWidth || boardY >= boardHeight) {
+            return true;
+          }
+
+          if (boardY >= 0 && board[boardY][boardX]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function mergePiece() {
+      currentPiece.matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (!value) return;
+          const boardY = currentPiece.y + y;
+          const boardX = currentPiece.x + x;
+          if (boardY >= 0) {
+            board[boardY][boardX] = currentPiece.color;
+          }
+        });
+      });
+    }
+
+    function clearLines() {
+      let cleared = 0;
+
+      for (let row = boardHeight - 1; row >= 0; row -= 1) {
+        if (board[row].every(Boolean)) {
+          board.splice(row, 1);
+          board.unshift(Array(boardWidth).fill(null));
+          cleared += 1;
+          row += 1;
+        }
+      }
+
+      if (cleared > 0) {
+        lines += cleared;
+        score += cleared * 100 * level;
+        level = 1 + Math.floor(lines / 10);
+      }
+
+      updateScoreboard();
+    }
+
+    function spawnPiece() {
+      currentPiece = randomPiece();
+      if (collides(currentPiece)) {
+        gameOver = true;
+        started = false;
+        statusEl.textContent = 'Game over. The void has closed in.';
+      }
+    }
+
+    function lockPiece() {
+      mergePiece();
+      clearLines();
+      spawnPiece();
+    }
+
+    function moveDown() {
+      if (!currentPiece || paused || gameOver) return;
+
+      if (!collides(currentPiece, 0, 1)) {
+        currentPiece.y += 1;
+        dropped += 1;
+        return;
+      }
+
+      lockPiece();
+      if (gameOver) return;
+      score += 10;
+      updateScoreboard();
+    }
+
+    function moveSide(direction) {
+      if (!currentPiece || paused || gameOver) return;
+      if (!collides(currentPiece, direction, 0)) {
+        currentPiece.x += direction;
+      }
+    }
+
+    function rotatePiece() {
+      if (!currentPiece || paused || gameOver) return;
+      const rotated = rotateMatrix(currentPiece.matrix);
+      const kicks = [0, -1, 1, -2, 2];
+
+      for (const kick of kicks) {
+        if (!collides(currentPiece, kick, 0, rotated)) {
+          currentPiece.matrix = rotated;
+          currentPiece.x += kick;
+          return;
+        }
+      }
+    }
+
+    function hardDrop() {
+      if (!currentPiece || paused || gameOver) return;
+      while (!collides(currentPiece, 0, 1)) {
+        currentPiece.y += 1;
+        score += 2;
+      }
+      lockPiece();
+      updateScoreboard();
+    }
+
+    function drawCell(x, y, color) {
+      tetrisContext.fillStyle = color;
+      tetrisContext.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
+      tetrisContext.strokeStyle = 'rgba(255,255,255,0.1)';
+      tetrisContext.strokeRect(x * blockSize + 0.5, y * blockSize + 0.5, blockSize - 1, blockSize - 1);
+    }
+
+    function drawBoard() {
+      tetrisContext.clearRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+      tetrisContext.fillStyle = '#07030d';
+      tetrisContext.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+
+      for (let y = 0; y < boardHeight; y += 1) {
+        for (let x = 0; x < boardWidth; x += 1) {
+          if (board[y][x]) {
+            drawCell(x, y, board[y][x]);
+          }
+        }
+      }
+
+      if (currentPiece) {
+        currentPiece.matrix.forEach((row, y) => {
+          row.forEach((value, x) => {
+            if (!value) return;
+            const drawX = currentPiece.x + x;
+            const drawY = currentPiece.y + y;
+            if (drawY >= 0) {
+              drawCell(drawX, drawY, currentPiece.color);
+            }
+          });
+        });
+      }
+    }
+
+    function gameLoop(timestamp) {
+      const stepDelay = Math.max(120, 650 - (level - 1) * 60);
+
+      if (started && !paused && !gameOver) {
+        if (!lastTime) lastTime = timestamp;
+        const delta = timestamp - lastTime;
+        if (delta >= stepDelay) {
+          moveDown();
+          lastTime = timestamp;
+        }
+      }
+
+      drawBoard();
+      window.requestAnimationFrame(gameLoop);
+    }
+
+    document.getElementById('tetris-start').addEventListener('click', () => {
+      resetTetris();
+      statusEl.textContent = 'Voidfall engaged. Keep the stack clean.';
+    });
+
+    document.getElementById('tetris-pause').addEventListener('click', () => {
+      if (!started || gameOver) return;
+      paused = !paused;
+      statusEl.textContent = paused ? 'Paused in the void.' : 'Back in motion.';
+    });
+
+    document.getElementById('tetris-reset').addEventListener('click', () => {
+      resetTetris();
+      statusEl.textContent = 'Board reset. The void is waiting.';
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (!started || paused || gameOver) return;
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        moveSide(-1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        moveSide(1);
+      }
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        moveDown();
+        score += 1;
+        updateScoreboard();
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        rotatePiece();
+      }
+      if (event.code === 'Space') {
+        event.preventDefault();
+        hardDrop();
+      }
+      if (event.key.toLowerCase() === 'p') {
+        event.preventDefault();
+        paused = true;
+        statusEl.textContent = 'Paused in the void.';
+      }
+    });
+
+    resetTetris();
+    statusEl.textContent = 'Press Start to begin the void stack.';
+    window.requestAnimationFrame(gameLoop);
+
     if (document.querySelector('#roll-button')) {
     // Roll the Void
     let rollGuess = null;
